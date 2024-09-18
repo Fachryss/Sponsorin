@@ -64,6 +64,7 @@ class CustomTextStyles {
     fontWeight: FontWeight.w400,
     color: Color(0xFF595959),
   );
+  // tes
 
   static const TextStyle textButtonSmall = TextStyle(
     fontSize: 12.0,
