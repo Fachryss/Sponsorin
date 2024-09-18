@@ -1,118 +1,172 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
+import 'package:sponsorin/style/textstyle.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // Warna primary color
   final Color primaryColor = Color(0xFF1EAAFD);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Custom Theme Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Business App',
       theme: ThemeData(
-        // Set primary color
         primaryColor: primaryColor,
-        // Gunakan font Poppins
         fontFamily: 'Poppins',
-        // Definisikan textTheme
-        textTheme: const TextTheme(
-          // Headline
-          headline1: TextStyle(
-            fontSize: 24.0,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
-          // Title
-          headline6: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
-          // AppBar
-          headline5: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-          // Subtitle
-          subtitle1: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
-          // Body
-          bodyText1: TextStyle(
-            fontSize: 14.0,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF595959),
-          ),
-          // Body2
-          bodyText2: TextStyle(
-            fontSize: 14.0,
-            fontWeight: FontWeight.w400,
-            color: Color(0xFF595959),
-          ),
-        ),
-        // Atur AppBar Theme
-        appBarTheme: AppBarTheme(
-          backgroundColor: primaryColor,
-          titleTextStyle: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
-            color: Colors.white,
-          ),
-          iconTheme: IconThemeData(
-            color: Colors.white,
-          ),
-        ),
+        textTheme: const TextTheme(),
       ),
       home: HomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Menggunakan text style dari theme
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Page'), // Menggunakan style AppBarTheme
+      // appBar: AppBar(
+      //   title: Text("Selamat Sore Ryo"),
+      //   centerTitle: true,
+      // ),
+      body: SingleChildScrollView(
+        child: Container(
+          color: Color.fromARGB(255, 244, 244, 244),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(24, 70, 24, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     CustomText(text: 'Selamat Sore Haza', style: Theme.of(context).textTheme.appBar),
+                //     CircleAvatar(
+                //       // backgroundImage: AssetImage(""),
+                //     ),
+                //   ],
+                // ),
+        
+                const CustomText(
+                  text: "Selamat Pagi Haza",
+                  style: CustomTextStyles.title,
+                ),
+                const CustomText(text: 'Ingin membuat event apa hari ini', style: CustomTextStyles.subtitle),
+                
+                const SizedBox(height: 16),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _categoryButton("Retail", true, Icons.store),
+                      _categoryButton("Makanan", false, Icons.fastfood),
+                      _categoryButton("Jasa", false, Icons.handyman),
+                      _categoryButton("Kegiatan", false, Icons.event),
+                    ],
+                  ),
+                ),
+                // const SizedBox(height: 20),
+                // const CustomText(text: 'Rekomendasi Usaha', style: CustomTextStyles.header),
+                // const SizedBox(height: 12),
+                // _businessCard("iBox", "Apple", Colors.black),
+                // SizedBox(height: 8),
+                // _businessCard("Informa", "Electronics", Colors.blue),
+                // SizedBox(height: 20),
+                // Text(
+                //   "Usaha lainnya",
+                //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                // ),
+                // SizedBox(height: 12),
+                // _businessCard(
+                //     "Warung Wareg", "Makanan tradisional Indonesia", Colors.red),
+              ],
+            ),
+          ),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavBarIcon(Icons.home, 0),
+              _buildNavBarIcon(Icons.business, 1),
+              _buildNavBarIcon(Icons.account_circle, 2),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _categoryButton(String text, bool isSelected, IconData icon) {
+    return Container(
+      margin: EdgeInsets.only(right: 8),
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isSelected ? Colors.blue : Colors.white,
+          foregroundColor: isSelected ? Colors.white : Colors.black,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6),
+          ),
+        ),
+        child: Row(
           children: [
-            Text(
-              'Headline Text',
-              style: Theme.of(context).textTheme.headline1,
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Title Text',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Subtitle Text',
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Body Text',
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Body2 Text',
-              style: Theme.of(context).textTheme.bodyText2,
-            ),
+            Icon(icon, size: 20),
+            SizedBox(width: 5),
+            CustomText(text: text, style: isSelected ? CustomTextStyles.textButtonMedium : CustomTextStyles.textBottomMediumGray),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _businessCard(String businessName, String category, Color color) {
+    return Card(
+      elevation: 3,
+      child: ListTile(
+        leading: Icon(Icons.store, color: color),
+        title:
+            Text(businessName, style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(category),
+        trailing: ElevatedButton(
+          onPressed: () {},
+          child: Text('Ajukan kerja sama'),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavBarIcon(IconData icon, int index) {
+    return GestureDetector(
+      onTap: () {
+        _onItemTapped(index);
+      },
+      child: CircleAvatar(
+        radius: 23,
+        backgroundColor: Color.fromARGB(240, 44, 62, 80),
+        child: Icon(
+          icon,
+          size: 25,
+          color: Colors.white,
         ),
       ),
     );
