@@ -24,7 +24,7 @@ class CustomTextStyles {
     fontFamily: 'Poppins',
     fontSize: 16.0,
     fontWeight: FontWeight.w600,
-    color: Color.fromARGB(255, 73, 73, 73)
+    color: Color.fromARGB(255, 0, 0, 0)
   );
 
   static const TextStyle title = TextStyle(
@@ -50,10 +50,22 @@ class CustomTextStyles {
   static const TextStyle header = TextStyle(
     fontSize: 20.0,
     fontWeight: FontWeight.w600,
-    color: Color.fromARGB(255, 73, 73, 73)
+    color: Color.fromARGB(255, 0, 0, 0)
   );
 
   static const TextStyle body = TextStyle(
+    fontSize: 14.0,
+    fontWeight: FontWeight.w500,
+    color: Color.fromARGB(255, 0, 0, 0),
+  );
+
+  static const TextStyle hint = TextStyle(
+    fontSize: 14.0,
+    fontWeight: FontWeight.w400,
+    color: Color.fromARGB(255, 89, 89, 89),
+  );
+
+  static const TextStyle bodygrey = TextStyle(
     fontSize: 14.0,
     fontWeight: FontWeight.w500,
     color: Color(0xFF595959),

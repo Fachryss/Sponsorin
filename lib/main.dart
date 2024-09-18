@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sponsorin/page/AIGenerate.dart';
 import 'package:sponsorin/style/textstyle.dart';
 
 void main() {
@@ -35,6 +36,13 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
+
+    if(index == 1) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AIGenerate()),
+    );
+  }
   }
 
   @override
