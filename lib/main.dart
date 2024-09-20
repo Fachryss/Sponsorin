@@ -1,120 +1,118 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
+import 'package:sponsorin/page/homepage.dart';
+import 'package:sponsorin/style/textstyle.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // Warna primary color
   final Color primaryColor = Color(0xFF1EAAFD);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Custom Theme Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Business App',
       theme: ThemeData(
-        // Set primary color
         primaryColor: primaryColor,
-        // Gunakan font Poppins
         fontFamily: 'Poppins',
-        // Definisikan textTheme
-        textTheme: const TextTheme(
-          // Headline
-          headline1: TextStyle(
-            fontSize: 24.0,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
-          // Title
-          headline6: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
-          // AppBar
-          headline5: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-          // Subtitle
-          subtitle1: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
-          // Body
-          bodyText1: TextStyle(
-            fontSize: 14.0,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF595959),
-          ),
-          // Body2
-          bodyText2: TextStyle(
-            fontSize: 14.0,
-            fontWeight: FontWeight.w400,
-            color: Color(0xFF595959),
-          ),
-        ),
-        // Atur AppBar Theme
-        appBarTheme: AppBarTheme(
-          backgroundColor: primaryColor,
-          titleTextStyle: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
-            color: Colors.white,
-          ),
-          iconTheme: IconThemeData(
-            color: Colors.white,
-          ),
-        ),
+        textTheme: const TextTheme(),
       ),
       home: HomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Menggunakan text style dari theme
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Page'), // Menggunakan style AppBarTheme
+      body: Homepage(),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Color.fromRGBO(244, 244, 244, 100),
+        type: BottomNavigationBarType.fixed, // Menonaktifkan animasi
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: _buildNavItem(0, Icons.home_outlined),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildNavItem(1, Icons.search),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildNavItem(2, Icons.add),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildNavItem(3, Icons.person_outline),
+            label: '',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(
-              'Headline Text',
-              style: Theme.of(context).textTheme.headline1,
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Title Text',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Subtitle Text',
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Body Text',
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Body2 Text',
-              style: Theme.of(context).textTheme.bodyText2,
-            ),
-          ],
+    );
+  }
+
+  Widget _businessCard(String businessName, String category, Color color) {
+    return Card(
+      elevation: 3,
+      child: ListTile(
+        leading: Icon(Icons.store, color: color),
+        title:
+            Text(businessName, style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(category),
+        trailing: ElevatedButton(
+          onPressed: () {},
+          child: Text('Ajukan kerja sama'),
         ),
       ),
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        if (_selectedIndex != index)
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color.fromARGB(0, 255, 255, 255),
+            ),
+          ),
+        if (_selectedIndex == index)
+          Container(
+            width: 50,
+            height: 50,
+            decoration:
+                BoxDecoration(shape: BoxShape.circle, color: Color(0xFF2C3E50)),
+          ),
+        Icon(
+          icon,
+          size: 32,
+          color: _selectedIndex == index
+              ? Colors.white
+              : Color.fromRGBO(72, 76, 82, 100),
+        ),
+      ],
     );
   }
 }
