@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class CustomText extends StatelessWidget {
   final String text;
@@ -19,39 +20,33 @@ class CustomText extends StatelessWidget {
 }
 
 class CustomTextStyles {
-
   static const TextStyle appBar = TextStyle(
-    fontFamily: 'Poppins',
-    fontSize: 16.0,
-    fontWeight: FontWeight.w600,
-    color: Color.fromARGB(255, 73, 73, 73)
-  );
+      fontFamily: 'Poppins',
+      fontSize: 16.0,
+      fontWeight: FontWeight.w600,
+      color: Color.fromARGB(255, 73, 73, 73));
 
   static const TextStyle title = TextStyle(
-    fontFamily: 'Poppins',
-    fontSize: 24.0,
-    fontWeight: FontWeight.w600,
-    color: Color.fromARGB(255, 73, 73, 73)
-  );
+      fontFamily: 'Poppins',
+      fontSize: 24.0,
+      fontWeight: FontWeight.w600,
+      color: Color.fromRGBO(0, 0, 0, 70));
 
   static const TextStyle titlelight = TextStyle(
-    fontFamily: 'Poppins',
-    fontSize: 18.0,
-    fontWeight: FontWeight.w600,
-    color: Color.fromARGB(255, 73, 73, 73)
-  );
+      fontFamily: 'Poppins',
+      fontSize: 18.0,
+      fontWeight: FontWeight.w600,
+      color: Color.fromARGB(255, 73, 73, 73));
 
   static const TextStyle subtitle = TextStyle(
-    fontSize: 16.0,
-    fontWeight: FontWeight.w500,
-    color: Color.fromARGB(255, 73, 73, 73)
-  );
+      fontSize: 16.0,
+      fontWeight: FontWeight.w500,
+      color: Color.fromRGBO(0, 0, 0, 70));
 
   static const TextStyle header = TextStyle(
-    fontSize: 20.0,
-    fontWeight: FontWeight.w600,
-    color: Color.fromARGB(255, 73, 73, 73)
-  );
+      fontSize: 20.0,
+      fontWeight: FontWeight.w600,
+      color: Color.fromARGB(255, 73, 73, 73));
 
   static const TextStyle body = TextStyle(
     fontSize: 14.0,
