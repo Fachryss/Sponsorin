@@ -61,8 +61,8 @@ class CustomTextStyles {
 
   static const TextStyle hint = TextStyle(
     fontSize: 14.0,
-    fontWeight: FontWeight.w400,
-    color: Color.fromARGB(255, 89, 89, 89),
+    fontWeight: FontWeight.w500,
+    color: Color.fromARGB(255, 75, 75, 75),
   );
 
   static const TextStyle bodygrey = TextStyle(

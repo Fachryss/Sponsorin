@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sponsorin/page/AIGenerate.dart';
 import 'package:sponsorin/style/textstyle.dart';
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    print('Widget binding initialized');
+
+    await dotenv.load(fileName: ".env");
+    print('Dotenv loaded');
+    print('API Key: ${dotenv.env['API_KEY']}');
+
+    runApp(MyApp());
+  } catch (e) {
+    print('Error: $e');
+    runApp(ErrorApp(error: e.toString()));
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -69,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                 //     ),
                 //   ],
                 // ),
-        
+                
                 const CustomText(
                   text: "Selamat Pagi Haza",
                   style: CustomTextStyles.title,
@@ -175,6 +188,23 @@ class _HomePageState extends State<HomePage> {
           icon,
           size: 25,
           color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+class ErrorApp extends StatelessWidget {
+  final String error;
+
+  const ErrorApp({Key? key, required this.error}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text('An error occurred: $error'),
         ),
       ),
     );
