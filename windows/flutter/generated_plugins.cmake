@@ -3,6 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  enhanced_url_launcher_windows
+  printing
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

@@ -19,41 +19,47 @@ class CustomText extends StatelessWidget {
 }
 
 class CustomTextStyles {
-
   static const TextStyle appBar = TextStyle(
-    fontFamily: 'Poppins',
-    fontSize: 16.0,
-    fontWeight: FontWeight.w600,
-    color: Color.fromARGB(255, 73, 73, 73)
-  );
+      fontFamily: 'Poppins',
+      fontSize: 16.0,
+      fontWeight: FontWeight.w600,
+      color: Color.fromARGB(255, 0, 0, 0));
 
   static const TextStyle title = TextStyle(
-    fontFamily: 'Poppins',
-    fontSize: 24.0,
-    fontWeight: FontWeight.w600,
-    color: Color.fromARGB(255, 73, 73, 73)
-  );
+      fontFamily: 'Poppins',
+      fontSize: 24.0,
+      fontWeight: FontWeight.w600,
+      color: Color.fromARGB(255, 73, 73, 73));
 
   static const TextStyle titlelight = TextStyle(
-    fontFamily: 'Poppins',
-    fontSize: 18.0,
-    fontWeight: FontWeight.w600,
-    color: Color.fromARGB(255, 73, 73, 73)
-  );
+      fontFamily: 'Poppins',
+      fontSize: 18.0,
+      fontWeight: FontWeight.w600,
+      color: Color.fromARGB(255, 73, 73, 73));
 
   static const TextStyle subtitle = TextStyle(
-    fontSize: 16.0,
-    fontWeight: FontWeight.w500,
-    color: Color.fromARGB(255, 73, 73, 73)
-  );
+      fontSize: 16.0,
+      fontWeight: FontWeight.w500,
+      color: Color.fromARGB(255, 73, 73, 73));
 
   static const TextStyle header = TextStyle(
-    fontSize: 20.0,
-    fontWeight: FontWeight.w600,
-    color: Color.fromARGB(255, 73, 73, 73)
-  );
+      fontSize: 20.0,
+      fontWeight: FontWeight.w600,
+      color: Color.fromARGB(255, 0, 0, 0));
 
   static const TextStyle body = TextStyle(
+    fontSize: 14.0,
+    fontWeight: FontWeight.w500,
+    color: Color.fromARGB(255, 0, 0, 0),
+  );
+
+  static const TextStyle hint = TextStyle(
+    fontSize: 14.0,
+    fontWeight: FontWeight.w500,
+    color: Color.fromARGB(255, 75, 75, 75),
+  );
+
+  static const TextStyle bodygrey = TextStyle(
     fontSize: 14.0,
     fontWeight: FontWeight.w500,
     color: Color(0xFF595959),
