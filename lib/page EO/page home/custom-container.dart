@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sponsorin/page%20EO/informasi-usaha.dart';
 
-Widget CustomContainerBerdiri(String imagePath) {
+Widget CustomContainerBerdiri(
+    {required BuildContext context, required String imagePath}) {
   return Container(
     padding: EdgeInsets.all(20),
     decoration: BoxDecoration(
@@ -34,7 +36,12 @@ Widget CustomContainerBerdiri(String imagePath) {
               borderRadius: BorderRadius.circular(6),
             ),
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => InformasiUsaha()),
+            );
+          },
           child: Text(
             "Ajukan kerja sama",
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),

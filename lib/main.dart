@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sponsorin/page/homepage.dart';
+import 'package:sponsorin/page%20EO/homepage.dart';
+import 'package:sponsorin/page%20EO/informasi-usaha.dart';
 import 'package:sponsorin/style/textstyle.dart';
 
 void main() {
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         textTheme: const TextTheme(),
       ),
-      home: HomePage(),
+      home: Homepage(),
     );
   }
 }

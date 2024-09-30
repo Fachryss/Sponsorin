@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sponsorin/components/custom-container-panjang.dart';
-import 'package:sponsorin/components/custom-container.dart';
+import 'package:sponsorin/page%20EO/page%20home/custom-container-panjang.dart';
+import 'package:sponsorin/page%20EO/page%20home/custom-container.dart';
 import 'package:sponsorin/style/textstyle.dart';
 import 'dart:math';
 
@@ -146,7 +146,7 @@ class _HomepageState extends State<Homepage> {
         child: Container(
           color: Color.fromRGBO(244, 244, 244, 0.911),
           child: Padding(
-            padding: EdgeInsets.fromLTRB(24, 25, 24, 24),
+            padding: EdgeInsets.fromLTRB(24, 30, 24, 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -165,18 +165,23 @@ class _HomepageState extends State<Homepage> {
                     children: [
                       _categoryButton("Retail", selectedCategory == "Retail",
                           Icons.card_travel),
+                      SizedBox(width: 15),
                       _categoryButton("Makanan", selectedCategory == "Makanan",
                           Icons.fastfood_outlined),
+                      SizedBox(width: 15),
                       _categoryButton("Jasa", selectedCategory == "Jasa",
                           Icons.handyman_outlined),
+                      SizedBox(width: 15),
                       _categoryButton(
                           "Kesehatan",
                           selectedCategory == "Kesehatan",
                           Icons.local_hospital_outlined),
+                      SizedBox(width: 15),
                       _categoryButton(
                           "Pendidikan",
                           selectedCategory == "Pendidikan",
                           Icons.school_outlined),
+                      SizedBox(width: 15),
                       _categoryButton("Hiburan", selectedCategory == "Hiburan",
                           Icons.park_outlined),
                     ],
@@ -192,7 +197,9 @@ class _HomepageState extends State<Homepage> {
                     children: recommendedBusinesses
                         .map((business) => Padding(
                               padding: const EdgeInsets.only(right: 20),
-                              child: CustomContainerBerdiri(business["image"]!),
+                              child: CustomContainerBerdiri(
+                                  imagePath: business["image"]!,
+                                  context: context),
                             ))
                         .toList(),
                   ),

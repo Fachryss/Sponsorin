@@ -31,14 +31,19 @@ dependencies:
   flutter:
     sdk: flutter
 
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  http: ^1.1.0
+  flutter_dotenv: ^5.1.0
+  enhanced_url_launcher: ^6.1.12
+  pdf: ^3.6.6
+  printing: ^5.9.3
+  path_provider: ^2.0.13
+  universal_html: ^2.0.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -68,6 +73,7 @@ flutter:
     - image/hisana.jpeg
     - image/kfc.jpg
     - image/kfc-logo.png
+    - asset/.env
 
   
   # An image asset can refer to one or more resolution-specific "variants", see
