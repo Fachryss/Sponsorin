@@ -8,9 +8,9 @@ Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
     print('Widget binding initialized');
 
-    await dotenv.load(fileName: ".env");
+    // await dotenv.load(fileName: ".env");
     print('Dotenv loaded');
-    print('API Key: ${dotenv.env['API_KEY']}');
+    // print('API Key: ${dotenv.env['API_KEY']}');
 
     runApp(MyApp());
   } catch (e) {
@@ -20,7 +20,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final Color primaryColor = Color(0xFF1EAAFD);
+  final Color primaryColor = Color.fromARGB(255, 132, 155, 168);
 
   @override
   Widget build(BuildContext context) {

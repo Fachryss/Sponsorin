@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
@@ -29,104 +30,99 @@ class ApiService {
       }
 
       final prompt = '''
-      Buatlah sebuah proposal sponsorship yang komprehensif, profesional, dan menarik dalam Bahasa Indonesia untuk acara berikut. Proposal harus memiliki panjang sekitar 1500-2000 kata, mencakup semua aspek penting dari acara dan peluang sponsorship.
+Buatlah sebuah proposal sponsorship yang komprehensif, profesional, dan menarik dalam Bahasa Indonesia untuk acara berikut. Proposal harus memiliki panjang sekitar 1500-2000 kata, mencakup semua aspek penting dari acara dan peluang sponsorship. Hasilkan proposal dalam format final tanpa komentar, instruksi tambahan, atau penjelasan proses.
 
-      Nama Acara: $eventName
+Nama Acara: $eventName
 
-      Ikuti struktur berikut dengan cermat, dan pastikan setiap bagian dielaborasi dengan baik:
+Struktur proposal:
 
-      1. Halaman Sampul (tidak dihitung dalam jumlah kata):
-         - Judul: "Proposal Sponsorship: [Nama Acara]"
-         - Tanggal: [Tanggal Hari Ini]
-         - Nama Organisasi Penyelenggara
-         - Informasi Kontak
+1. Halaman Sampul:
+   - Judul: "Proposal Sponsorship: [Nama Acara]"
+   - Tanggal: [Tanggal Hari Ini]
+   - Nama Organisasi Penyelenggara
+   - Informasi Kontak
 
-      2. Daftar Isi (tidak dihitung dalam jumlah kata):
-         - Cantumkan semua bagian utama dengan nomor halaman
+2. Daftar Isi
 
-      3. Ringkasan Eksekutif (sekitar 200 kata):
-         - Jelaskan secara singkat dan menarik tentang acara: $eventDescription
-         - Uraikan mengapa acara ini unik dan mengapa sponsor harus terlibat
-         - Sebutkan beberapa manfaat utama bagi sponsor
+3. Ringkasan Eksekutif (sekitar 200 kata):
+   - Ringkasan singkat dan menarik tentang acara: $eventDescription
+   - Keunikan acara dan alasan sponsor harus terlibat
+   - Manfaat utama bagi sponsor
 
-      4. Tentang Acara (sekitar 300 kata):
-         - Deskripsi lengkap acara
-         - Tujuan dan visi acara
-         - Sejarah singkat (jika ada)
-         - Tanggal, lokasi, dan durasi acara
-         - Aktivitas atau program utama dalam acara
+4. Tentang Acara (sekitar 300 kata):
+   - Deskripsi lengkap acara
+   - Tujuan dan visi acara
+   - Sejarah singkat (jika ada)
+   - Tanggal, lokasi, dan durasi acara
+   - Aktivitas atau program utama
 
-      5. Profil Audiens (sekitar 250 kata):
-         - Informasi detail tentang audiens target: $audienceInfo
-         - Analisis demografi yang mendalam: $demographics
-         - Jelaskan bagaimana audiens ini relevan dan berharga bagi merek sponsor potensial
-         - Sertakan data statistik atau hasil survei jika ada
+5. Profil Audiens (sekitar 250 kata):
+   - Informasi detail tentang audiens target: $audienceInfo
+   - Analisis demografi: $demographics
+   - Relevansi audiens bagi merek sponsor potensial
+   - Data statistik atau hasil survei (jika ada)
 
-      6. Peluang Pemasaran dan Visibilitas (sekitar 300 kata):
-         - Daftar rinci media yang akan digunakan: $mediaList
-         - Untuk setiap platform, jelaskan:
-           * Bagaimana sponsor akan dipromosikan
-           * Estimasi jangkauan dan exposure
-           * Frekuensi penayangan/publikasi
-         - Peluang branding di lokasi acara
-         - Integrasi sponsor dalam materi promosi acara
+6. Peluang Pemasaran dan Visibilitas (sekitar 300 kata):
+   - Daftar rinci media yang akan digunakan: $mediaList
+   - Untuk setiap platform:
+     * Metode promosi sponsor
+     * Estimasi jangkauan dan exposure
+     * Frekuensi penayangan/publikasi
+   - Peluang branding di lokasi acara
+   - Integrasi sponsor dalam materi promosi
 
-      7. Dampak pada Merek Sponsor (sekitar 250 kata):
-         - Analisis mendalam tentang potensi dampak pada merek sponsor: $brandImpact
-         - Jelaskan bagaimana acara ini sejalan dengan nilai dan tujuan merek sponsor
-         - Berikan contoh konkret bagaimana sponsor dapat meningkatkan citra mereknya
+7. Dampak pada Merek Sponsor (sekitar 250 kata):
+   - Analisis potensi dampak pada merek sponsor: $brandImpact
+   - Keselarasan acara dengan nilai dan tujuan merek sponsor
+   - Contoh konkret peningkatan citra merek
 
-      8. Tujuan dan Manfaat Sponsorship (sekitar 250 kata):
-         - Uraikan tujuan utama sponsorship: $sponsorPurpose
-         - Jelaskan secara rinci bagaimana acara akan membantu mencapai tujuan tersebut: $eventHow
-         - Daftar manfaat spesifik yang akan diperoleh sponsor, termasuk:
-           * Peningkatan brand awareness
-           * Peluang networking
-           * Akses ke data audiens
-           * Peluang penjualan langsung (jika relevan)
+8. Tujuan dan Manfaat Sponsorship (sekitar 250 kata):
+   - Tujuan utama sponsorship: $sponsorPurpose
+   - Cara acara membantu mencapai tujuan tersebut: $eventHow
+   - Manfaat spesifik untuk sponsor:
+     * Peningkatan brand awareness
+     * Peluang networking
+     * Akses ke data audiens
+     * Peluang penjualan langsung (jika relevan)
 
-      9. Paket Sponsorship (sekitar 300 kata):
-         - Rincian lengkap paket sponsorship yang ditawarkan: $subscriptionPackage
-         - Untuk setiap tingkat sponsorship, jelaskan:
-           * Harga
-           * Hak dan keuntungan yang diperoleh
-           * Visibilitas dan eksposur yang ditawarkan
-           * Keuntungan eksklusif
-         - Bandingkan nilai yang ditawarkan di setiap tingkat
+9. Paket Sponsorship (sekitar 300 kata):
+   - Rincian paket sponsorship: $subscriptionPackage
+   - Untuk setiap tingkat sponsorship:
+     * Harga
+     * Hak dan keuntungan
+     * Visibilitas dan eksposur
+     * Keuntungan eksklusif
+   - Perbandingan nilai antar tingkat
 
-      10. Rincian Tambahan (sekitar 200 kata):
-          $proposalDetail
-          - Tambahkan informasi penting lainnya yang belum tercakup
+10. Rincian Tambahan (sekitar 200 kata):
+    $proposalDetail
 
-      11. Testimoni dan Endorsement (jika ada, sekitar 100 kata):
-          - Kutipan dari sponsor atau peserta acara sebelumnya
-          - Penghargaan atau pengakuan yang pernah diterima
+11. Testimoni dan Endorsement (jika ada, sekitar 100 kata)
 
-      12. Tim Penyelenggara (sekitar 100 kata):
-          - Profil singkat tim utama
-          - Pengalaman dan keahlian relevan
+12. Tim Penyelenggara (sekitar 100 kata):
+    - Profil singkat tim utama
+    - Pengalaman dan keahlian relevan
 
-      13. Ajakan Bertindak (sekitar 100 kata):
-          - Buat ajakan yang kuat dan persuasif untuk sponsor bergabung
-          - Jelaskan langkah-langkah konkret untuk berpartisipasi
-          - Berikan tenggat waktu jika relevan
+13. Ajakan Bertindak (sekitar 100 kata):
+    - Ajakan persuasif untuk bergabung
+    - Langkah-langkah konkret untuk berpartisipasi
+    - Tenggat waktu (jika relevan)
 
-      14. Penutup (sekitar 150 kata):
-          - Rangkum kembali poin-poin kunci proposal
-          - Tekankan kembali nilai unik yang ditawarkan
-          - Ucapkan terima kasih atas waktu dan pertimbangan mereka
-          - Sertakan informasi kontak untuk tindak lanjut
+14. Penutup (sekitar 150 kata):
+    - Rangkuman poin-poin kunci
+    - Penekanan nilai unik yang ditawarkan
+    - Ucapan terima kasih
+    - Informasi kontak untuk tindak lanjut
 
-      Instruksi Tambahan:
-      - Gunakan bahasa Indonesia yang formal, profesional, namun tetap menarik dan persuasif.
-      - Pastikan ada transisi yang halus antar bagian untuk menciptakan dokumen yang kohesif.
-      - Gunakan data dan statistik (yang masuk akal) untuk mendukung klaim Anda.
-      - Sesuaikan tone dan gaya bahasa dengan industri dan jenis acara yang diajukan.
-      - Sertakan call-to-action yang jelas di seluruh dokumen.
-      - Pastikan proposal memiliki struktur yang jelas dengan penggunaan heading dan subheading.
+Panduan tambahan:
+- Gunakan bahasa Indonesia formal, profesional, menarik, dan persuasif.
+- Buat transisi halus antar bagian untuk dokumen yang kohesif.
+- Gunakan data dan statistik yang masuk akal untuk mendukung klaim.
+- Sesuaikan tone dan gaya bahasa dengan industri dan jenis acara.
+- Sertakan call-to-action yang jelas di seluruh dokumen.
+- Gunakan struktur yang jelas dengan heading dan subheading.
 
-      Hasilkan proposal yang koheren, persuasif, dan profesional berdasarkan panduan di atas. Pastikan setiap bagian dielaborasi dengan baik dan relevan dengan informasi yang diberikan.
-      ''';
+Hasilkan proposal final tanpa komentar tambahan atau penjelasan proses pembuatan.''';
 
       final headers = {
         'Content-Type': 'application/json',
