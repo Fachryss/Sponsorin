@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:sponsorin/page/api_service.dart';
 import 'package:sponsorin/style/textstyle.dart';
@@ -24,6 +26,30 @@ class _AIGenerateState extends State<AIGenerate> {
   final TextEditingController _howController = TextEditingController();
   final TextEditingController _detailController = TextEditingController();
   final TextEditingController _subscibtionController = TextEditingController();
+
+  // Fungsi untuk mengisi semua input dengan data simulasi
+  void _fillSimulationData() {
+    _nameController.text =
+        '32nd Anniversary Moklet: Go Global, Achieve Excellence';
+    _descriptionController.text =
+        '32nd Anniversary of Moklet adalah perayaan tahunan yang diselenggarakan oleh SMK Telkom Malang untuk memperingati ulang tahun sekolah. Acara ini bertujuan untuk mempromosikan keunggulan dalam pendidikan teknologi dan informatika serta mendukung siswa dalam mengembangkan kreativitas di bidang akademik dan non-akademik.';
+    _infoController.text =
+        'Audiens terdiri dari siswa, alumni, guru, dan masyarakat umum dengan usia antara 15-50 tahun. Mayoritas audiens memiliki latar belakang pendidikan di bidang teknologi dan informatika.';
+    _mediaController.text =
+        'Promosi dilakukan melalui media sosial (Instagram, YouTube, Facebook), serta melalui situs web resmi sekolah.';
+    _demografisController.text =
+        'Usia: 15-50 tahun, Jenis Kelamin: Laki-laki dan Perempuan, Pendidikan: SMA/SMK hingga Sarjana.';
+    _impactController.text =
+        'Acara ini memberikan dampak yang positif kepada brand sponsor melalui eksposur media sosial dan liputan langsung di situs web sekolah.';
+    _purposeController.text =
+        'Meningkatkan citra brand sponsor di kalangan generasi muda dan mendorong partisipasi aktif dalam acara teknologi.';
+    _howController.text =
+        'Acara ini membantu sponsor dengan menargetkan audiens yang sesuai dengan demografi yang diinginkan sponsor, serta mempromosikan produk secara langsung.';
+    _detailController.text =
+        'Proposal ini berisi pengantar tentang acara, rincian struktur acara, profil penyelenggara, opsi sponsorship, anggaran, dan call to action.';
+    _subscibtionController.text =
+        'Paket Platinum: Rp 50.000.000, Paket Gold: Rp 25.000.000, Paket Silver: Rp 10.000.000.';
+  }
 
   Future<void> _validateAndGenerate() async {
     bool isValid = true;
@@ -136,30 +162,37 @@ class _AIGenerateState extends State<AIGenerate> {
     }
   }
 
-  Future<void> _generatePDF(String content) async {
-    final pdf = pw.Document();
+ Future<void> _generatePDF(String content) async {
+    // Mendapatkan direktori dokumen pengguna
+    Directory? documentDirectory = await getExternalStorageDirectory();
+    String eventName = _nameController.text.isNotEmpty ? _nameController.text : "event";
+    String randomNumber = Random().nextInt(100000).toString();
+    String path = '${documentDirectory?.path}/Documents/sponsorin/${eventName}_${randomNumber}.pdf';
 
+    final pdf = pw.Document();
+    
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) => pw.Center(
-          child: pw.Text(content, style: pw.TextStyle(fontSize: 12)),
+          child: pw.Text(content),
         ),
       ),
     );
 
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/proposal.pdf');
-      await file.writeAsBytes(await pdf.save());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Proposal berhasil disimpan di: ${file.path}')),
-      );
-    } catch (e) {
-      print(e);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal membuat PDF')),
-      );
+    // Membuat direktori sponsorin jika belum ada
+    Directory sponsorinDirectory = Directory('${documentDirectory?.path}/Documents/sponsorin');
+    if (!await sponsorinDirectory.exists()) {
+      await sponsorinDirectory.create(recursive: true);
     }
+
+    // Menyimpan PDF
+    final File file = File(path);
+    await file.writeAsBytes(await pdf.save());
+    
+    // Memberi tahu pengguna bahwa file telah disimpan
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('PDF disimpan di $path')),
+    );
   }
 
   @override
@@ -218,7 +251,7 @@ class _AIGenerateState extends State<AIGenerate> {
                 const SizedBox(height: 12),
                 CustomTextArea(
                     hintText:
-                        "Informasi mengenai audiens (usia, jenis, kelamin, latar belakang pendidikan dan ukuran audiens)",
+                        "Informasi mengenai audiens (usia, jenis kelamin, latar belakang pendidikan, dan ukuran audiens)",
                     controller: _infoController,
                     maxlines: 5,
                     minWords: 50),
@@ -287,6 +320,16 @@ class _AIGenerateState extends State<AIGenerate> {
                     ),
                   ),
                 )),
+                const SizedBox(height: 16),
+                Center(
+                  child: TextButton(
+                    onPressed: _fillSimulationData, // Memanggil fungsi simulasi
+                    child: Text(
+                      'Isi dengan Data Simulasi',
+                      style: TextStyle(color: Colors.blue, fontSize: 14),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -297,7 +340,6 @@ class _AIGenerateState extends State<AIGenerate> {
 }
 
 // Komponen Text Input: Text Area
-
 class CustomTextArea extends StatelessWidget {
   final String hintText;
   final TextEditingController controller;
@@ -331,27 +373,8 @@ class CustomTextArea extends StatelessWidget {
             enabledBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(4)),
               borderSide: BorderSide(
-                color: Color.fromARGB(89, 89, 89, 100),
-                width: 0.5,
+                color: Colors.black,
               ),
-            ),
-            focusedBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(4)),
-              borderSide: BorderSide(
-                color: Color.fromARGB(255, 85, 85, 85),
-                width: 0.5,
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          right: 16,
-          bottom: 8,
-          child: Text(
-            '*Minimal $minWords kata',
-            style: TextStyle(
-              fontSize: 10,
-              color: Color.fromRGBO(89, 89, 89, 100),
             ),
           ),
         ),

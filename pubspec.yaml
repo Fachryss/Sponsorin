@@ -41,6 +41,7 @@ dependencies:
   printing: ^5.9.3
   path_provider: ^2.0.13
   universal_html: ^2.0.8
+  http_proxy: ^1.0.0
 
 dev_dependencies:
   flutter_test:
