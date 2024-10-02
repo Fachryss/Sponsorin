@@ -4,7 +4,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String _apiUrl = 'https://api.ai21.com/studio/v1/chat/completions'; // Ganti dengan URL API Jamba yang benar
+  static const String _apiUrl =
+      'https://api.ai21.com/studio/v1/chat/completions'; // Ganti dengan URL API Jamba yang benar
 
   static Future<String> generateProposal({
     required String eventName,
@@ -32,23 +33,31 @@ class ApiService {
       String expectedAttendees = '1000 - 1500 orang';
 
       String companyName = 'PT Good Day Beverages Indonesia';
-      String companyDescription = 'PT Good Day Beverages Indonesia adalah perusahaan FMCG yang berfokus pada produksi dan distribusi berbagai varian minuman kopi siap minum (RTD) di Indonesia.';
-      String industryType = 'FMCG (Fast-Moving Consumer Goods), Makanan dan Minuman';
-      String companyTargetMarket = 'Target pasar kami adalah generasi milenial dan Gen Z berusia antara 18-35 tahun yang menginginkan minuman kopi dengan rasa yang inovatif dan mudah diakses.';
-      String companyBusinessGoals = 'Tujuan jangka pendek kami adalah meningkatkan pangsa pasar sebesar 15% di segmen minuman kopi siap saji dalam satu tahun.';
-      String companyValuesMission = 'Nilai inti perusahaan kami adalah kreativitas, keunikan, dan kedekatan dengan konsumen.';
-      String companyContact = 'Email: info@goodday.com Telepon: +62 21 1234 5678 Alamat: Jl. Kopi No. 9, Jakarta, Indonesia';
+      String companyDescription =
+          'PT Good Day Beverages Indonesia adalah perusahaan FMCG yang berfokus pada produksi dan distribusi berbagai varian minuman kopi siap minum (RTD) di Indonesia.';
+      String industryType =
+          'FMCG (Fast-Moving Consumer Goods), Makanan dan Minuman';
+      String companyTargetMarket =
+          'Target pasar kami adalah generasi milenial dan Gen Z berusia antara 18-35 tahun yang menginginkan minuman kopi dengan rasa yang inovatif dan mudah diakses.';
+      String companyBusinessGoals =
+          'Tujuan jangka pendek kami adalah meningkatkan pangsa pasar sebesar 15% di segmen minuman kopi siap saji dalam satu tahun.';
+      String companyValuesMission =
+          'Nilai inti perusahaan kami adalah kreativitas, keunikan, dan kedekatan dengan konsumen.';
+      String companyContact =
+          'Email: info@goodday.com Telepon: +62 21 1234 5678 Alamat: Jl. Kopi No. 9, Jakarta, Indonesia';
 
       final prompt = '''
-Buatlah sebuah proposal sponsorship yang komprehensif, profesional, dan menarik dalam Bahasa Indonesia untuk acara berikut. Proposal harus memiliki panjang sekitar 2000-2500 kata, mencakup semua aspek penting dari acara dan peluang sponsorship, dengan fokus khusus pada kesesuaian dengan strategi dan tujuan bisnis sponsor.
+      # Template Prompt untuk AI-Generated Sponsorship Proposal
 
-Informasi Acara:
+Buatlah sebuah proposal sponsorship yang komprehensif, profesional, dan menarik dalam Bahasa Indonesia untuk acara berikut. Proposal harus memiliki panjang sekitar 2000-2500 kata, mencakup semua aspek penting dari acara dan peluang sponsorship, dengan fokus khusus pada kesesuaian dengan strategi dan tujuan bisnis sponsor. Hasilkan proposal dalam format final tanpa komentar, instruksi tambahan, atau penjelasan proses.
+
+## Informasi Acara:
 - Nama Acara: $eventName
 - Deskripsi Acara: $eventDescription
 - Tanggal dan Lokasi: $eventDateLocation
 - Jumlah Peserta yang Diharapkan: $expectedAttendees
 
-Informasi Perusahaan Target:
+## Informasi Perusahaan Target:
 - Nama Perusahaan: $companyName
 - Deskripsi Perusahaan: $companyDescription
 - Jenis Industri: $industryType
@@ -57,35 +66,129 @@ Informasi Perusahaan Target:
 - Nilai dan Misi Perusahaan: $companyValuesMission
 - Kontak Perusahaan: $companyContact
 
-Struktur proposal:
-1. Halaman Sampul
+## Struktur proposal:
+
+1. Halaman Sampul:
+   - Judul: "Proposal Sponsorship: [Nama Acara] untuk [Nama Perusahaan]"
+   - Tanggal: [Tanggal Hari Ini]
+   - Nama Organisasi Penyelenggara
+   - Informasi Kontak
+
 2. Daftar Isi
-3. Ringkasan Eksekutif
-4. Profil Acara dan Kesesuaian dengan Strategi Sponsor
-5. Profil dan Data Audiens
-6. Jangkauan Media dan Potensi Exposure
-7. Dampak dan Potensi Acara
-8. Kesesuaian dengan Tujuan Bisnis Sponsor
-9. Manfaat Sponsorship
-10. Paket Sponsorship
-11. Rincian Tambahan
-12. Tim Penyelenggara
-13. Testimoni dan Endorsement (jika ada)
-14. Struktur Proposal dan Evaluasi
-15. Ajakan Bertindak
-16. Penutup
 
-Informasi tambahan:
-- Informasi Audiens: $audienceInfo
-- Media yang Digunakan: $mediaList
-- Demografi Audiens: $demographics
-- Dampak pada Brand: $brandImpact
-- Tujuan Sponsor: $sponsorPurpose
-- Cara Acara Membantu Sponsor: $eventHow
-- Rincian Proposal: $proposalDetail
-- Paket Sponsorship: $subscriptionPackage
+3. Ringkasan Eksekutif (sekitar 250 kata):
+   - Ringkasan singkat dan menarik tentang acara
+   - Keunikan acara dan relevansinya dengan [Nama Perusahaan]
+   - Manfaat utama bagi sponsor, disesuaikan dengan tujuan bisnis [Nama Perusahaan]
+   - Highlight kesesuaian strategis antara acara dan perusahaan
 
-Harap gunakan bahasa Indonesia formal, profesional, menarik, dan persuasif. Buat transisi halus antar bagian untuk dokumen yang kohesif. Gunakan data dan statistik konkret untuk mendukung setiap klaim. Sesuaikan tone dan gaya bahasa dengan industri perusahaan target. Sertakan call-to-action yang jelas dan relevan di seluruh dokumen. Gunakan struktur yang jelas dengan heading dan subheading. Pastikan setiap bagian menunjukkan pemahaman mendalam tentang perusahaan target dan kebutuhannya. Fokus pada mendemonstrasikan nilai dan ROI yang jelas bagi perusahaan target.
+4. Profil Acara dan Kesesuaian dengan Strategi Sponsor (sekitar 400 kata):
+   - Deskripsi lengkap acara
+   - Tujuan dan visi acara
+   - Sejarah singkat (jika ada)
+   - Tanggal, lokasi, dan durasi acara
+   - Aktivitas atau program utama
+   - Analisis mendalam tentang bagaimana acara ini sejalan dengan:
+     * Strategi pemasaran [Nama Perusahaan]
+     * Tujuan jangka panjang [Nama Perusahaan]
+     * Nilai-nilai dan misi [Nama Perusahaan]
+
+5. Profil dan Data Audiens (sekitar 350 kata):
+   - Informasi detail tentang audiens target: $audienceInfo
+   - Analisis demografi mendalam: $demographics
+     * Usia, jenis kelamin, pekerjaan, pendapatan
+     * Minat dan preferensi
+     * Perilaku konsumen
+   - Relevansi audiens bagi [Nama Perusahaan]
+   - Data statistik atau hasil survei (jika ada)
+   - Perbandingan antara audiens acara dan target pasar [Nama Perusahaan]
+
+6. Jangkauan Media dan Potensi Exposure (sekitar 350 kata):
+   - Daftar rinci media yang akan digunakan: $mediaList
+   - Untuk setiap platform:
+     * Metode promosi sponsor
+     * Estimasi jangkauan dan exposure (gunakan data konkret)
+     * Frekuensi penayangan/publikasi
+   - Peluang branding di lokasi acara
+   - Integrasi sponsor dalam materi promosi
+   - Analisis tentang bagaimana exposure ini mendukung tujuan bisnis [Nama Perusahaan]
+
+7. Dampak dan Potensi Acara (sekitar 300 kata):
+   - Analisis potensi dampak pada merek sponsor: $brandImpact
+   - Proyeksi peningkatan brand awareness untuk [Nama Perusahaan]
+   - Estimasi ROI berdasarkan investasi sponsorship
+   - Potensi leads atau konversi penjualan
+   - Dampak jangka panjang pada positioning [Nama Perusahaan] di industri
+
+8. Kesesuaian dengan Tujuan Bisnis Sponsor (sekitar 350 kata):
+   - Analisis mendalam tentang tujuan bisnis [Nama Perusahaan]: $companyBusinessGoals
+   - Penjelasan rinci bagaimana acara membantu mencapai tujuan tersebut: $eventHow
+   - Strategi spesifik yang akan diimplementasikan untuk mencapai tujuan bisnis sponsor
+   - Metrik dan KPI yang akan digunakan untuk mengukur kesuksesan
+
+9. Manfaat Sponsorship (sekitar 300 kata):
+   - Manfaat spesifik untuk [Nama Perusahaan]:
+     * Peningkatan brand awareness (dengan estimasi persentase atau angka)
+     * Peluang networking dengan stakeholder kunci
+     * Akses ke data audiens yang berharga
+     * Peluang penjualan langsung (jika relevan)
+     * Customer engagement opportunities
+   - Penjelasan bagaimana setiap manfaat mendukung strategi dan tujuan [Nama Perusahaan]
+
+10. Paket Sponsorship (sekitar 350 kata):
+    - Rincian paket sponsorship: $subscriptionPackage
+    - Untuk setiap tingkat sponsorship:
+      * Harga
+      * Hak dan keuntungan detail
+      * Visibilitas dan eksposur spesifik
+      * Keuntungan eksklusif
+    - Perbandingan nilai antar tingkat
+    - Penjelasan bagaimana setiap paket disesuaikan dengan kebutuhan [Nama Perusahaan]
+
+11. Rincian Tambahan (sekitar 200 kata):
+    $proposalDetail
+    - Informasi logistik acara
+    - Rencana kontingensi (jika relevan)
+    - Asuransi dan pertimbangan hukum
+
+12. Tim Penyelenggara (sekitar 150 kata):
+    - Profil singkat tim utama
+    - Pengalaman dan keahlian relevan
+    - Track record kesuksesan acara sebelumnya
+
+13. Testimoni dan Endorsement (jika ada, sekitar 150 kata)
+    - Testimoni dari sponsor sebelumnya
+    - Endorsement dari tokoh industri atau influencer
+
+14. Struktur Proposal dan Evaluasi (sekitar 200 kata):
+    - Penjelasan singkat tentang struktur proposal
+    - Metode evaluasi kesuksesan sponsorship
+    - Timeline pelaporan dan feedback
+
+15. Ajakan Bertindak (sekitar 150 kata):
+    - Ajakan persuasif untuk bergabung, disesuaikan dengan [Nama Perusahaan]
+    - Langkah-langkah konkret untuk berpartisipasi
+    - Tenggat waktu (jika relevan)
+    - Penawaran untuk diskusi lebih lanjut atau presentasi
+
+16. Penutup (sekitar 150 kata):
+    - Rangkuman poin-poin kunci
+    - Penekanan nilai unik yang ditawarkan kepada [Nama Perusahaan]
+    - Ucapan terima kasih
+    - Informasi kontak untuk tindak lanjut
+
+Panduan tambahan:
+- Gunakan bahasa Indonesia formal, profesional, menarik, dan persuasif.
+- Buat transisi halus antar bagian untuk dokumen yang kohesif.
+- Gunakan data dan statistik konkret untuk mendukung setiap klaim.
+- Sesuaikan tone dan gaya bahasa dengan industri [Nama Perusahaan].
+- Sertakan call-to-action yang jelas dan relevan di seluruh dokumen.
+- Gunakan struktur yang jelas dengan heading dan subheading.
+- Pastikan setiap bagian menunjukkan pemahaman mendalam tentang [Nama Perusahaan] dan kebutuhannya.
+- Fokus pada mendemonstrasikan nilai dan ROI yang jelas bagi [Nama Perusahaan].
+
+Hasilkan proposal final tanpa komentar tambahan atau penjelasan proses pembuatan.
+
 ''';
 
       final headers = {
@@ -96,7 +199,11 @@ Harap gunakan bahasa Indonesia formal, profesional, menarik, dan persuasif. Buat
       final body = jsonEncode({
         'model': 'jamba-1.5-large', // Ganti dengan nama model Jamba yang benar
         'messages': [
-          {'role': 'system', 'content': 'Anda adalah asisten AI yang ahli dalam membuat proposal sponsorship yang detail dan profesional.'},
+          {
+            'role': 'system',
+            'content':
+                'Anda adalah asisten AI yang ahli dalam membuat proposal sponsorship yang detail dan profesional.'
+          },
           {'role': 'user', 'content': prompt}
         ],
         'temperature': 0.7,
@@ -123,12 +230,14 @@ Harap gunakan bahasa Indonesia formal, profesional, menarik, dan persuasif. Buat
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data['choices'] is List && data['choices'].isNotEmpty) {
-          return data['choices'][0]['message']['content'] ?? 'Tidak ada teks yang dihasilkan.';
+          return data['choices'][0]['message']['content'] ??
+              'Tidak ada teks yang dihasilkan.';
         } else {
           throw Exception('Format respons tidak sesuai: $data');
         }
       } else {
-        throw Exception('Gagal generate proposal. Status Code: ${response.statusCode}, Body: ${response.body}');
+        throw Exception(
+            'Gagal generate proposal. Status Code: ${response.statusCode}, Body: ${response.body}');
       }
     } catch (e, stacktrace) {
       print('Error saat generate proposal: $e');
