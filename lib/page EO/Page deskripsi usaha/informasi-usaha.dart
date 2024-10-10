@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/deskripsi-usaha.dart';
 import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/title.dart';
-import 'package:sponsorin/page%20EO/homepage.dart';
+import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
 import 'package:sponsorin/style/textstyle.dart';
 
 class InformasiUsaha extends StatefulWidget {
@@ -43,18 +43,15 @@ void _showAddTaskOptions(BuildContext context) {
     builder: (BuildContext context) {
       return Container(
         padding: EdgeInsets.all(16),
-        height: 300,
+        height: 150,
         child: GridView.count(
           crossAxisCount: 3, // Menampilkan dalam 3 kolom
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
           children: [
-            _buildOption(context, Icons.edit_document, "AI Generate"),
-            _buildOption(context, Icons.cloud, "Google Drive"),
-            _buildOption(context, Icons.document_scanner_outlined, "Scanner"),
-            _buildOption(context, Icons.file_upload_outlined, "Upload"),
-            _buildOption(context, Icons.link, "Link"),
-            _buildOption(context, Icons.add, "Buat"),
+            _buildOption(context, 'image/AI-gen.png', "AI Generate"),
+            _buildOption(context, 'image/drive.png', "Google Drive"),
+            _buildOption(context, 'image/upload.png', "Upload"),
           ],
         ),
       );
@@ -64,7 +61,7 @@ void _showAddTaskOptions(BuildContext context) {
 
 Widget _buildOption(
   BuildContext context,
-  IconData icon,
+  String imagePath,
   String label,
 ) {
   return GestureDetector(
@@ -77,10 +74,7 @@ Widget _buildOption(
         //   MaterialPageRoute(builder: (context) => AIGenerate()),
         // );
       } else if (label == "Google Drive") {
-      } else if (label == "Scanner") {
-      } else if (label == "Upload") {
-      } else if (label == "Link") {
-      } else if (label == "Buat") {}
+      } else if (label == "Upload") {}
     },
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Container(
@@ -89,11 +83,17 @@ Widget _buildOption(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: Colors.black87, // Border color
+            color: Colors.black54, // Border color
             width: 2.0, // Border width
           ),
         ),
-        child: Icon(icon, size: 25, color: Colors.black54),
+        child: ClipOval(
+          child: Image.asset(
+            imagePath,
+            // width: 65,
+            // height: 65,
+          ),
+        ),
       ),
       SizedBox(height: 10),
       Text(
@@ -136,7 +136,6 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          color: Color.fromRGBO(244, 244, 244, 0.911),
           child: Padding(
             padding: EdgeInsets.fromLTRB(24, 20, 24, 24),
             child: Column(

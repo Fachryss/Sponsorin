@@ -15,10 +15,7 @@ Widget buildDescriptionCard(String description) {
         Text(
           description,
           textAlign: TextAlign.justify,
-          style: TextStyle(
-            fontSize: 14,
-            color: Color.fromRGBO(71, 71, 71, 0.965),
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.black54),
         ),
       ],
     ),

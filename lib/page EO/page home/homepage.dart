@@ -111,8 +111,9 @@ class _HomepageState extends State<Homepage> {
         backgroundColor: Color.fromRGBO(244, 244, 244, 100),
         actions: [
           Padding(
-            padding:
-                const EdgeInsets.only(right: 20), // Set the same right padding
+            padding: const EdgeInsets.only(
+              right: 20,
+            ), // Set the same right padding
             child: Container(
               // color: Colors.yellow,
               width: 50,
@@ -144,14 +145,14 @@ class _HomepageState extends State<Homepage> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          color: Color.fromRGBO(244, 244, 244, 0.911),
+          color: Color.fromRGBO(244, 244, 244, 100),
           child: Padding(
-            padding: EdgeInsets.fromLTRB(24, 30, 24, 24),
+            padding: EdgeInsets.fromLTRB(24, 20, 24, 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const CustomText(
-                  text: "Selamat Pagi Haza",
+                  text: "Selamat Pagi Ryo",
                   style: CustomTextStyles.title,
                 ),
                 SizedBox(height: 5),
