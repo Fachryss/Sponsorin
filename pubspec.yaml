@@ -39,6 +39,7 @@ dependencies:
   printing: ^5.9.3
   path_provider: ^2.0.13
   universal_html: ^2.0.8
+  file_picker: ^8.1.2
 
 dev_dependencies:
   flutter_test:
@@ -73,7 +74,11 @@ flutter:
     - image/hisana.jpeg
     - image/kfc.jpg
     - image/kfc-logo.png
-    - asset/.env
+    - image/background_picture1.png
+    - image/background_picture2.png
+    - image/AI-gen.png
+    - image/upload.png
+    - image/drive.png
 
   
   # An image asset can refer to one or more resolution-specific "variants", see

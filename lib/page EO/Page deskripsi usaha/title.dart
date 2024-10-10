@@ -29,7 +29,7 @@ Widget title(String title, String categories, String location) {
               categories,
               style: TextStyle(
                   fontSize: 14,
-                  color: Color.fromRGBO(0, 0, 0, 70),
+                  color: Colors.black54,
                   fontWeight: FontWeight.w500),
             )
           ],
@@ -51,7 +51,7 @@ Widget title(String title, String categories, String location) {
               location,
               style: TextStyle(
                   fontSize: 14,
-                  color: Color.fromRGBO(0, 0, 0, 70),
+                  color: Colors.black54,
                   fontWeight: FontWeight.w500),
             )
           ],

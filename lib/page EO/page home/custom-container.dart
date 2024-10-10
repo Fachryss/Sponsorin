@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sponsorin/page%20EO/informasi-usaha.dart';
+import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/informasi-usaha.dart';
 
 Widget CustomContainerBerdiri(
     {required BuildContext context, required String imagePath}) {
