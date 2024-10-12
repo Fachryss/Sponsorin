@@ -1,11 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sponsorin/page/api_service.dart';
 import 'package:sponsorin/style/textstyle.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 
 class AIGenerate extends StatefulWidget {
   const AIGenerate({super.key});
@@ -162,15 +164,85 @@ class _AIGenerateState extends State<AIGenerate> {
     }
   }
 
- Future<void> _generatePDF(String content) async {
-    // Mendapatkan direktori dokumen pengguna
-    Directory? documentDirectory = await getExternalStorageDirectory();
-    String eventName = _nameController.text.isNotEmpty ? _nameController.text : "event";
-    String randomNumber = Random().nextInt(100000).toString();
-    String path = '${documentDirectory?.path}/Documents/sponsorin/${eventName}_${randomNumber}.pdf';
+  Future<void> _debugGenerate() async {
+    String debugProposal = '''
+      # Debug Proposal
 
+      ## Event Details
+      **Name:** ${_nameController.text}
+      **Description:** ${_descriptionController.text}
+
+      ## Audience Information
+      ${_infoController.text}
+
+      ## Media and Promotion
+      ${_mediaController.text}
+
+      ## Demographics
+      ${_demografisController.text}
+
+      ## Impact on Brand
+      ${_impactController.text}
+
+      ## Sponsor's Business Objectives
+      ${_purposeController.text}
+
+      ## How the Event Helps Sponsors
+      ${_howController.text}
+
+      ## Proposal Structure
+      ${_detailController.text}
+
+      ## Sponsorship Packages
+      ${_subscibtionController.text}
+
+      ---
+      This is a debug proposal generated for testing purposes.
+          ''';
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Generated Proposal'),
+        content: SingleChildScrollView(child: Text(debugProposal)),
+        actions: [
+          TextButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text('Save as PDF'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await _generatePDF(debugProposal);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+
+String sanitizeFileName(String fileName) {
+  // Ganti karakter yang tidak valid dengan underscore
+  return fileName.replaceAll(RegExp(r'[<>:"/\\|?*]+'), '_').replaceAll(' ', '_');
+}
+
+Future<void> _generatePDF(String content) async {
+  try {
+    // Meminta izin penyimpanan secara runtime
+    var status = await Permission.storage.request();
+    if (status.isDenied || status.isPermanentlyDenied) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Storage permission is required to save PDF')),
+      );
+      return;
+    }
+
+    // Buat dokumen PDF
     final pdf = pw.Document();
-    
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) => pw.Center(
@@ -179,20 +251,92 @@ class _AIGenerateState extends State<AIGenerate> {
       ),
     );
 
-    // Membuat direktori sponsorin jika belum ada
-    Directory sponsorinDirectory = Directory('${documentDirectory?.path}/Documents/sponsorin');
-    if (!await sponsorinDirectory.exists()) {
-      await sponsorinDirectory.create(recursive: true);
-    }
-
-    // Menyimpan PDF
-    final File file = File(path);
-    await file.writeAsBytes(await pdf.save());
+    // Ambil nama dari _nameController dan sanitasi
+    String eventName = _nameController.text.isNotEmpty ? sanitizeFileName(_nameController.text) : "event";
     
-    // Memberi tahu pengguna bahwa file telah disimpan
+    // Tambahkan 3 digit angka acak
+    String randomNumber = Random().nextInt(900).toString().padLeft(3, '0'); // 3 digit angka acak
+    String fileName = '${eventName}_$randomNumber.pdf';
+
+    // Simpan file ke folder Documents
+    if (Platform.isAndroid) {
+      // Mendapatkan direktori Documents untuk Android
+      Directory? directory = Directory('/storage/emulated/0/Documents');
+
+      // Buat direktori jika belum ada
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+        print('Directory created: ${directory.path}'); // Debug log
+      }
+
+      String path = '${directory.path}/$fileName';
+      final File file = File(path);
+      await file.writeAsBytes(await pdf.save());
+
+      // Log debug
+      print('PDF saved to: $path'); // Debug log
+      print('File name: $fileName'); // Debug log
+
+      // Menampilkan pesan bahwa file sudah tersimpan
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('PDF saved to $path')),
+      );
+    } else {
+      // Penanganan untuk iOS
+      final directory = await getApplicationDocumentsDirectory();
+      String path = '${directory.path}/$fileName';
+      final File file = File(path);
+      await file.writeAsBytes(await pdf.save());
+
+      // Log debug
+      print('PDF saved to: $path'); // Debug log
+      print('File name: $fileName'); // Debug log
+
+      // Menampilkan pesan bahwa file sudah tersimpan
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('PDF saved to $path')),
+      );
+    }
+  } catch (e) {
+    print('Error saving PDF: $e'); // Log error
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('PDF disimpan di $path')),
+      SnackBar(content: Text('Error saving PDF: $e')),
     );
+  }
+
+    // // Mendapatkan direktori dokumen pengguna
+    // Directory? documentDirectory = await getExternalStorageDirectory();
+    // String eventName =
+    //     _nameController.text.isNotEmpty ? _nameController.text : "event";
+    // String randomNumber = Random().nextInt(100000).toString();
+    // String path =
+    //     '${documentDirectory?.path}/Documents/sponsorin/${eventName}_${randomNumber}.pdf';
+
+    // final pdf = pw.Document();
+
+    // pdf.addPage(
+    //   pw.Page(
+    //     build: (pw.Context context) => pw.Center(
+    //       child: pw.Text(content),
+    //     ),
+    //   ),
+    // );
+
+    // // Membuat direktori sponsorin jika belum ada
+    // Directory sponsorinDirectory =
+    //     Directory('${documentDirectory?.path}/Documents/sponsorin');
+    // if (!await sponsorinDirectory.exists()) {
+    //   await sponsorinDirectory.create(recursive: true);
+    // }
+
+    // // Menyimpan PDF
+    // final File file = File(path);
+    // await file.writeAsBytes(await pdf.save());
+
+    // // Memberi tahu pengguna bahwa file telah disimpan
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(content: Text('PDF disimpan di $path')),
+    // );
   }
 
   @override
@@ -328,6 +472,20 @@ class _AIGenerateState extends State<AIGenerate> {
                       'Isi dengan Data Simulasi',
                       style: TextStyle(color: Colors.blue, fontSize: 14),
                     ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _debugGenerate,
+                    child: Text(
+                      "Debug Generate",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+            
                   ),
                 ),
               ],
