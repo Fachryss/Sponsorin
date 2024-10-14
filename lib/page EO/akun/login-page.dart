@@ -5,8 +5,9 @@ import 'package:sponsorin/auth/pemilihan-posisi.dart';
 import 'package:sponsorin/main.dart';
 import 'package:sponsorin/page%20EO/akun/buat-akun-page.dart';
 import 'package:sponsorin/page%20EO/akun/components.dart';
-import 'package:sponsorin/page%20EO/akun/login-page.dart';
 import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class loginPageEO extends StatefulWidget {
   const loginPageEO({super.key});
@@ -16,12 +17,64 @@ class loginPageEO extends StatefulWidget {
 }
 
 class _loginPageEOState extends State<loginPageEO> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _startImageLoop();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   void _togglePasswordVisibility() {
     setState(() {
       _isPasswordVisible = !_isPasswordVisible;
     });
+  }
+
+  Future<void> _signIn() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      if (userCredential.user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'An error occurred. Please try again.';
+      if (e.code == 'user-not-found') {
+        errorMessage = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        errorMessage = 'Wrong password provided.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   String? _fileName;
@@ -33,7 +86,6 @@ class _loginPageEOState extends State<loginPageEO> {
         _fileName = result.files.single.name;
       });
     } else {
-      // User canceled the picker
       setState(() {
         _fileName = null;
       });
@@ -57,18 +109,6 @@ class _loginPageEOState extends State<loginPageEO> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _startImageLoop();
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
 
@@ -78,11 +118,9 @@ class _loginPageEOState extends State<loginPageEO> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
-          padding: const EdgeInsets.only(
-              left: 24.0, top: 18), // Adjust the left padding as needed
+          padding: const EdgeInsets.only(left: 24.0, top: 18),
           child: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.white, size: 30),
+            icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 30),
             onPressed: () {
               Navigator.push(
                 context,
@@ -126,13 +164,12 @@ class _loginPageEOState extends State<loginPageEO> {
                           const Text(
                             "Selamat Datang",
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 32,
-                                fontWeight: FontWeight.w600),
+                              color: Colors.white,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w600
+                            ),
                           ),
-                          const SizedBox(
-                            height: 8,
-                          ),
+                          const SizedBox(height: 8),
                           const Text(
                             "Mari login ke akun anda",
                             style: TextStyle(
@@ -141,17 +178,11 @@ class _loginPageEOState extends State<loginPageEO> {
                               fontWeight: FontWeight.w100,
                             ),
                           ),
-                          const SizedBox(
-                            height: 60,
-                          ),
-                          buildTextField("Email"),
-                          const SizedBox(
-                            height: 22,
-                          ),
-                          PasswordField(),
-                          const SizedBox(
-                            height: 78,
-                          ),
+                          const SizedBox(height: 60),
+                          buildTextField("Email", controller: _emailController),
+                          const SizedBox(height: 22),
+                          PasswordField(controller: _passwordController),
+                          const SizedBox(height: 78),
                         ],
                       ),
                     )
@@ -166,10 +197,11 @@ class _loginPageEOState extends State<loginPageEO> {
               buttonText: "Masuk",
               belowText: "Belum punya akun?",
               navigateTo: HomePage(),
-              navigateToStatus:
-                  BuatAkunEO(), // Replace with your actual login page
+              navigateToStatus: BuatAkunEO(),
               context: context,
               status: 'Sign Up',
+              onPressed: _signIn,
+              isLoading: _isLoading,
             ),
           ),
         ],

@@ -6,6 +6,9 @@ import 'package:sponsorin/main.dart';
 import 'package:sponsorin/page%20EO/akun/components.dart';
 import 'package:sponsorin/page%20EO/akun/login-page.dart';
 import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BuatAkunEO extends StatefulWidget {
   const BuatAkunEO({super.key});
@@ -15,7 +18,17 @@ class BuatAkunEO extends StatefulWidget {
 }
 
 class _BuatAkunEOState extends State<BuatAkunEO> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -32,9 +45,58 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
         _fileName = result.files.single.name;
       });
     } else {
-      // User canceled the picker
       setState(() {
         _fileName = null;
+      });
+    }
+  }
+
+  Future<void> _createAccount() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Create user with email and password
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      // If successful, store additional user info in Firestore
+      if (userCredential.user != null) {
+        await _firestore.collection('users').doc(userCredential.user!.uid).set({
+          'name': _nameController.text,
+          'email': _emailController.text,
+          'phone': _phoneController.text,
+          'address': _addressController.text,
+          'documentName': _fileName,
+          'userType': 'EO', // Assuming this is for Event Organizers
+        });
+
+        // Navigate to HomePage on success
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'An error occurred. Please try again.';
+      if (e.code == 'weak-password') {
+        errorMessage = 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        errorMessage = 'The account already exists for that email.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred. Please try again.')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
       });
     }
   }
@@ -64,14 +126,17 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
   @override
   void dispose() {
     _timer?.cancel();
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Detect if keyboard is visible
-    final bool isKeyboardVisible =
-        MediaQuery.of(context).viewInsets.bottom != 0;
+    final bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -79,12 +144,9 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
-          padding: const EdgeInsets.only(
-            left: 24.0,
-          ), // Adjust the left padding as needed
+          padding: const EdgeInsets.only(left: 24.0),
           child: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.white, size: 30),
+            icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 30),
             onPressed: () {
               Navigator.push(
                 context,
@@ -128,13 +190,12 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
                           const Text(
                             "Selamat Datang",
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 32,
-                                fontWeight: FontWeight.w600),
+                              color: Colors.white,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w600
+                            ),
                           ),
-                          const SizedBox(
-                            height: 8,
-                          ),
+                          const SizedBox(height: 8),
                           const Text(
                             "Silakan membuat profile anda",
                             style: TextStyle(
@@ -143,33 +204,19 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
                               fontWeight: FontWeight.w100,
                             ),
                           ),
-                          const SizedBox(
-                            height: 60,
-                          ),
-                          buildTextField("Nama"),
-                          const SizedBox(
-                            height: 22,
-                          ),
-                          buildTextField("Email"),
-                          const SizedBox(
-                            height: 22,
-                          ),
-                          buildTextField("Nomor Telepon"),
-                          const SizedBox(
-                            height: 22,
-                          ),
-                          buildTextField("Alamat Kantor"),
-                          const SizedBox(
-                            height: 22,
-                          ),
+                          const SizedBox(height: 60),
+                          buildTextField("Nama", controller: _nameController),
+                          const SizedBox(height: 22),
+                          buildTextField("Email", controller: _emailController),
+                          const SizedBox(height: 22),
+                          buildTextField("Nomor Telepon", controller: _phoneController),
+                          const SizedBox(height: 22),
+                          buildTextField("Alamat Kantor", controller: _addressController),
+                          const SizedBox(height: 22),
                           buildUploadField(_fileName, pickFile),
-                          const SizedBox(
-                            height: 22,
-                          ),
-                          PasswordField(),
-                          const SizedBox(
-                            height: 78,
-                          ),
+                          const SizedBox(height: 22),
+                          PasswordField(controller: _passwordController),
+                          const SizedBox(height: 78),
                         ],
                       ),
                     )
@@ -178,17 +225,205 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
               ),
             ),
           ),
-          if (!isKeyboardVisible) // Only show button if keyboard is not visible
+          if (!isKeyboardVisible)
             buildCustomButton(
               buttonText: "Buat Akun",
               belowText: "Sudah punya akun?",
               navigateTo: HomePage(),
-              navigateToStatus:
-                  loginPageEO(), // Replace with your actual login page
-              context: context, status: 'Login',
+              navigateToStatus: loginPageEO(),
+              context: context,
+              status: 'Login',
+              onPressed: _createAccount,
+              isLoading: _isLoading,
             ),
         ],
       ),
     );
   }
 }
+
+// Update the buildTextField and PasswordField widgets in components.dart if not already updated
+// Widget buildTextField(String input, {required TextEditingController controller}) {
+//   return Opacity(
+//     opacity: 0.85,
+//     child: Container(
+//       width: 350,
+//       height: 52,
+//       child: TextField(
+//         controller: controller,
+//         style: TextStyle(
+//           color: Colors.white,
+//           fontSize: 16,
+//         ),
+//         decoration: InputDecoration(
+//           filled: true,
+//           fillColor: Color.fromRGBO(78, 75, 76, 65),
+//           hintText: input,
+//           hintStyle: TextStyle(
+//             color: Colors.white70,
+//             fontSize: 14,
+//             fontWeight: FontWeight.w100,
+//           ),
+//           border: OutlineInputBorder(
+//             borderRadius: BorderRadius.circular(6),
+//           ),
+//           contentPadding: EdgeInsets.fromLTRB(23, 0, 0, 0),
+//         ),
+//       ),
+//     ),
+//   );
+// }
+
+// class PasswordField extends StatefulWidget {
+//   final TextEditingController controller;
+
+//   const PasswordField({Key? key, required this.controller}) : super(key: key);
+
+//   @override
+//   _PasswordFieldState createState() => _PasswordFieldState();
+// }
+
+// class _PasswordFieldState extends State<PasswordField> {
+//   bool _isPasswordVisible = false;
+
+//   void _togglePasswordVisibility() {
+//     setState(() {
+//       _isPasswordVisible = !_isPasswordVisible;
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       mainAxisAlignment: MainAxisAlignment.center,
+//       children: <Widget>[
+//         Opacity(
+//           opacity: 0.85,
+//           child: SizedBox(
+//             width: 350,
+//             height: 52,
+//             child: TextField(
+//               controller: widget.controller,
+//               obscureText: !_isPasswordVisible,
+//               style: const TextStyle(
+//                 color: Colors.white,
+//                 fontSize: 18,
+//               ),
+//               decoration: InputDecoration(
+//                 filled: true,
+//                 fillColor: const Color.fromRGBO(78, 75, 76, 65),
+//                 hintText: "Password",
+//                 hintStyle: const TextStyle(
+//                   color: Colors.white70,
+//                   fontSize: 14,
+//                   fontWeight: FontWeight.w100,
+//                 ),
+//                 border: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(6),
+//                 ),
+//                 contentPadding: const EdgeInsets.fromLTRB(23, 0, 0, 0),
+//                 suffixIcon: IconButton(
+//                   icon: Icon(
+//                     _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+//                     color: Colors.white,
+//                   ),
+//                   onPressed: _togglePasswordVisibility,
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// Update the buildCustomButton in components.dart if not already updated
+// Widget buildCustomButton({
+//   required String buttonText,
+//   required String belowText,
+//   required String status,
+//   required Widget navigateTo,
+//   required Widget navigateToStatus,
+//   required BuildContext context,
+//   required VoidCallback onPressed,
+//   required bool isLoading,
+// }) {
+//   return Container(
+//     child: Padding(
+//       padding: EdgeInsets.fromLTRB(24, 20, 24, 50),
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.end,
+//         children: [
+//           Center(
+//             child: Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               crossAxisAlignment: CrossAxisAlignment.center,
+//               children: [
+//                 ElevatedButton(
+//                   style: ElevatedButton.styleFrom(
+//                     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(12),
+//                     ),
+//                     backgroundColor: Color.fromARGB(255, 255, 255, 255),
+//                     minimumSize: Size(300, 50),
+//                   ),
+//                   onPressed: isLoading ? null : onPressed,
+//                   child: isLoading
+//                       ? CircularProgressIndicator()
+//                       : Text(
+//                           buttonText,
+//                           style: TextStyle(
+//                             color: Colors.black,
+//                             fontWeight: FontWeight.w600,
+//                             fontSize: 24,
+//                           ),
+//                         ),
+//                 ),
+//                 SizedBox(height: 15),
+//                 Row(
+//                   crossAxisAlignment: CrossAxisAlignment.center,
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   children: [
+//                     Text(
+//                       belowText,
+//                       style: TextStyle(
+//                         fontSize: 14,
+//                         fontWeight: FontWeight.w200,
+//                         color: Colors.white,
+//                       ),
+//                     ),
+//                     SizedBox(width: 5),
+//                     GestureDetector(
+//                       onTap: () {
+//                         Navigator.push(
+//                           context,
+//                           MaterialPageRoute(
+//                             builder: (context) => navigateToStatus,
+//                           ),
+//                         );
+//                       },
+//                       child: RichText(
+//                         text: TextSpan(
+//                           text: status,
+//                           style: TextStyle(
+//                             fontSize: 15,
+//                             fontWeight: FontWeight.w600,
+//                             color: Colors.white,
+//                             decoration: TextDecoration.underline,
+//                             decorationColor: Colors.white,
+//                           ),
+//                         ),
+//                       ),
+//                     )
+//                   ],
+//                 )
+//               ],
+//             ),
+//           )
+//         ],
+//       ),
+//     ),
+//   );
+// }
