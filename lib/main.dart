@@ -1,9 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:sponsorin/auth/auth.dart';
-import 'package:sponsorin/page%20EO/akun/login-page.dart';
-import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
+import 'package:sponsorin/page%20EO/profile/profile.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
+import 'package:sponsorin/auth/auth.dart';
+import 'package:sponsorin/auth/pemilihan-posisi.dart';
+import 'package:sponsorin/page%20EO/Search/search-page.dart';
+import 'package:sponsorin/page%20EO/add%20event/add-event.dart';
+import 'package:sponsorin/page%20EO/akun/buat-akun-page.dart';
+import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
+import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/informasi-usaha.dart';
 import 'package:sponsorin/style/textstyle.dart';
 
 void main() async {
@@ -16,7 +21,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final Color primaryColor = Color(0xFF1EAAFD);
+  final Color primaryColor = Color.fromRGBO(30, 170, 253, 100);
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +46,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
+  final List<Widget> _pages = [ Profile(), Homepage(), SearchPage(), AddEvent()];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -50,7 +57,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Homepage(),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Color.fromRGBO(244, 244, 244, 100),
         type: BottomNavigationBarType.fixed, // Menonaktifkan animasi
