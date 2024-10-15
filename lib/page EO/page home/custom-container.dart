@@ -15,7 +15,7 @@ Widget CustomContainerBerdiri(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
           ),
-          width: 200,
+          width: 180,
           height: 200,
           margin: EdgeInsets.all(7),
           child: ClipRRect(
