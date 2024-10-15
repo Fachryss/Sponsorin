@@ -16,7 +16,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 
 class BuatAkunEO extends StatefulWidget {
-  const BuatAkunEO({super.key});
+  const BuatAkunEO({Key? key}) : super(key: key);
 
   @override
   State<BuatAkunEO> createState() => _BuatAkunEOState();
@@ -36,8 +36,41 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
   bool _isPasswordVisible = false;
   bool _isLoading = false;
 
-  // String _randomAvatarSvg = RandomAvatarString();
   GlobalKey _avatarKey = GlobalKey();
+  String _randomAvatarSeed = DateTime.now().toIso8601String();
+
+  String? _fileName;
+  List<String> images = [
+    'image/background_picture1.png',
+    'image/background_picture2.png',
+  ];
+  int _currentImageIndex = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startImageLoop();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _startImageLoop() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
+      setState(() {
+        _currentImageIndex = (_currentImageIndex + 1) % images.length;
+      });
+    });
+  }
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -45,7 +78,6 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
     });
   }
 
-  String? _fileName;
   Future<void> pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
@@ -65,9 +97,10 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
       RenderRepaintBoundary boundary = _avatarKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 3.0);
       ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      print("Avatar captured successfully");
       return byteData?.buffer.asUint8List();
     } catch (e) {
-      print(e);
+      print("Error capturing avatar: $e");
       return null;
     }
   }
@@ -78,6 +111,7 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
       UploadTask uploadTask = ref.putData(imageData);
       TaskSnapshot snapshot = await uploadTask;
       String downloadUrl = await snapshot.ref.getDownloadURL();
+      print("Avatar uploaded successfully: $downloadUrl");
       return downloadUrl;
     } catch (e) {
       print('Error uploading avatar: $e');
@@ -104,8 +138,12 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
         String? avatarUrl;
         
         if (imageData != null) {
-          // Upload the avatar to Firebase Storage
           avatarUrl = await _uploadAvatarToStorage(imageData, userCredential.user!.uid);
+          if (avatarUrl == null) {
+            print("Failed to upload avatar");
+          }
+        } else {
+          print("Failed to capture avatar");
         }
 
         await _firestore.collection('users').doc(userCredential.user!.uid).set({
@@ -114,7 +152,7 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
           'phone': _phoneController.text,
           'address': _addressController.text,
           'documentName': _fileName,
-          'userType': 'EO', // Assuming this is for Event Organizers
+          'userType': 'EO',
           'avatarUrl': avatarUrl,
         });
 
@@ -135,6 +173,7 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
         SnackBar(content: Text(errorMessage)),
       );
     } catch (e) {
+      print("Error in _createAccount: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('An error occurred. Please try again.')),
       );
@@ -143,39 +182,6 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
         _isLoading = false;
       });
     }
-  }
-
-  final List<String> images = [
-    'image/background_picture1.png',
-    'image/background_picture2.png',
-  ];
-
-  int _currentImageIndex = 0;
-  Timer? _timer;
-
-  void _startImageLoop() {
-    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
-      setState(() {
-        _currentImageIndex = (_currentImageIndex + 1) % images.length;
-      });
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _startImageLoop();
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _addressController.dispose();
-    _passwordController.dispose();
-    super.dispose();
   }
 
   @override
@@ -249,6 +255,11 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
                             ),
                           ),
                           const SizedBox(height: 60),
+                          // RepaintBoundary(
+                          //   key: _avatarKey,
+                          //   child: RandomAvatar(_randomAvatarSeed, height: 100, width: 100),
+                          // ),
+                          // const SizedBox(height: 22),
                           buildTextField("Nama", controller: _nameController),
                           const SizedBox(height: 22),
                           buildTextField("Email", controller: _emailController),
