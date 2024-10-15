@@ -9,6 +9,11 @@ import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:random_avatar/random_avatar.dart';
+import 'dart:typed_data';
+import 'package:flutter/rendering.dart';
+import 'dart:ui' as ui;
 
 class BuatAkunEO extends StatefulWidget {
   const BuatAkunEO({super.key});
@@ -20,6 +25,7 @@ class BuatAkunEO extends StatefulWidget {
 class _BuatAkunEOState extends State<BuatAkunEO> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -29,6 +35,9 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
   
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+
+  // String _randomAvatarSvg = RandomAvatarString();
+  GlobalKey _avatarKey = GlobalKey();
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -51,6 +60,31 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
     }
   }
 
+  Future<Uint8List?> _capturePng() async {
+    try {
+      RenderRepaintBoundary boundary = _avatarKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      return byteData?.buffer.asUint8List();
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future<String?> _uploadAvatarToStorage(Uint8List imageData, String userId) async {
+    try {
+      Reference ref = _storage.ref().child('user_avatars').child('$userId.png');
+      UploadTask uploadTask = ref.putData(imageData);
+      TaskSnapshot snapshot = await uploadTask;
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading avatar: $e');
+      return null;
+    }
+  }
+
   Future<void> _createAccount() async {
     setState(() {
       _isLoading = true;
@@ -65,6 +99,15 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
 
       // If successful, store additional user info in Firestore
       if (userCredential.user != null) {
+        // Capture the avatar image
+        Uint8List? imageData = await _capturePng();
+        String? avatarUrl;
+        
+        if (imageData != null) {
+          // Upload the avatar to Firebase Storage
+          avatarUrl = await _uploadAvatarToStorage(imageData, userCredential.user!.uid);
+        }
+
         await _firestore.collection('users').doc(userCredential.user!.uid).set({
           'name': _nameController.text,
           'email': _emailController.text,
@@ -72,6 +115,7 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
           'address': _addressController.text,
           'documentName': _fileName,
           'userType': 'EO', // Assuming this is for Event Organizers
+          'avatarUrl': avatarUrl,
         });
 
         // Navigate to HomePage on success
