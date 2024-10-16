@@ -7,7 +7,6 @@ import 'package:sponsorin/page%20EO/akun/components.dart';
 import 'package:sponsorin/page%20EO/akun/login-page.dart';
 import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:random_avatar/random_avatar.dart';
@@ -125,15 +124,12 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
     });
 
     try {
-      // Create user with email and password
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
 
-      // If successful, store additional user info in Firestore
       if (userCredential.user != null) {
-        // Capture the avatar image
         Uint8List? imageData = await _capturePng();
         String? avatarUrl;
         
@@ -156,7 +152,6 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
           'avatarUrl': avatarUrl,
         });
 
-        // Navigate to HomePage on success
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
@@ -184,8 +179,91 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
     }
   }
 
+  Widget _buildTextField(String input, TextEditingController controller, {bool isPassword = false}) {
+    return Opacity(opacity: 0.85, child: 
+    Container(
+      width: 350,
+      height: 52,
+      // margin: EdgeInsets.symmetric(vertical: 10),
+      child: TextField(
+        controller: controller,
+        obscureText: isPassword && !_isPasswordVisible,
+        style:TextStyle(color: Colors.white, fontSize: 16),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Color.fromRGBO(78, 75, 76, 65),
+          hintText: input,
+          hintStyle: TextStyle(
+            color: Colors.white70,
+            fontSize: 14,
+            fontWeight: FontWeight.w100,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6)
+          ),
+          contentPadding: EdgeInsets.fromLTRB(23, 0, 0, 0)
+        ),
+      ),
+      // child: TextField(
+      //   controller: controller,
+      //   obscureText: isPassword && !_isPasswordVisible,
+      //   style: TextStyle(color: Colors.white),
+      //   decoration: InputDecoration(
+      //     labelText: label,
+      //     labelStyle: TextStyle(color: Colors.white70),
+      //     enabledBorder: OutlineInputBorder(
+      //       borderSide: BorderSide(color: Colors.white70),
+      //       borderRadius: BorderRadius.circular(10),
+      //     ),
+      //     focusedBorder: OutlineInputBorder(
+      //       borderSide: BorderSide(color: Colors.white),
+      //       borderRadius: BorderRadius.circular(10),
+      //     ),
+      //     suffixIcon: isPassword
+      //         ? IconButton(
+      //             icon: Icon(
+      //               _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+      //               color: Colors.white70,
+      //             ),
+      //             onPressed: _togglePasswordVisibility,
+      //           )
+      //         : null,
+      //   ),
+      ),
+    );
+    
+  }
+
+  Widget _buildUploadField() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: Colors.white24,
+          onPrimary: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        onPressed: pickFile,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.upload_file),
+              SizedBox(width: 10),
+              Text(_fileName ?? 'Upload Dokumen'),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
     final bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return Scaffold(
@@ -227,70 +305,92 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
             height: double.infinity,
             width: double.infinity,
             color: Colors.black.withOpacity(0.68),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 120, 24, 0),
+            child: SafeArea(
               child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Column(
-                        children: [
-                          const Text(
-                            "Selamat Datang",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 32,
-                              fontWeight: FontWeight.w600
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            "Silakan membuat profile anda",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                          const SizedBox(height: 60),
-                          // RepaintBoundary(
-                          //   key: _avatarKey,
-                          //   child: RandomAvatar(_randomAvatarSeed, height: 100, width: 100),
-                          // ),
-                          // const SizedBox(height: 22),
-                          buildTextField("Nama", controller: _nameController),
-                          const SizedBox(height: 22),
-                          buildTextField("Email", controller: _emailController),
-                          const SizedBox(height: 22),
-                          buildTextField("Nomor Telepon", controller: _phoneController),
-                          const SizedBox(height: 22),
-                          buildTextField("Alamat Kantor", controller: _addressController),
-                          const SizedBox(height: 22),
-                          buildUploadField(_fileName, pickFile),
-                          const SizedBox(height: 22),
-                          PasswordField(controller: _passwordController),
-                          const SizedBox(height: 78),
-                        ],
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: screenSize.height * 0.05),
+                      Text(
+                        "Selamat Datang",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: screenSize.width * 0.08,
+                          fontWeight: FontWeight.w600
+                        ),
                       ),
-                    )
-                  ],
+                      SizedBox(height: screenSize.height * 0.01),
+                      Text(
+                        "Silakan membuat profile anda",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: screenSize.width * 0.04,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      // SizedBox(height: screenSize.height * 0.05),
+                      // RepaintBoundary(
+                      //   key: _avatarKey,
+                      //   child: RandomAvatar(_randomAvatarSeed, height: screenSize.width * 0.25, width: screenSize.width * 0.25),
+                      // ),
+                      SizedBox(height: screenSize.height * 0.03),
+                      _buildTextField("Nama", _nameController),
+                      _buildTextField("Email", _emailController),
+                      _buildTextField("Nomor Telepon", _phoneController),
+                      _buildTextField("Alamat Kantor", _addressController),
+                      _buildTextField("Password", _passwordController, isPassword: true),
+                      _buildUploadField(),
+                      SizedBox(height: screenSize.height * 0.05),
+                      if (!isKeyboardVisible)
+                        // Visibility(
+                        //   visible: !isKeyboardVisible,
+                        //   child: buildCustomButton(
+                        //     buttonText: "Buat Akun",
+                        //     belowText: "Belum punya akun?",
+                        //     navigateTo: HomePage(),
+                        //     navigateToStatus: BuatAkunEO(),
+                        //     context: context,
+                        //     status: 'Sign Up',
+                        //     onPressed: _signIn,
+                        //     isLoading: _isLoading,
+                        //   ),
+                        // ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.blue,
+                            onPrimary: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                          ),
+                          onPressed: _isLoading ? null : _createAccount,
+                          child: _isLoading
+                              ? CircularProgressIndicator(color: Colors.white)
+                              : Text("Buat Akun", style: TextStyle(fontSize: 18)),
+                        ),
+                      SizedBox(height: screenSize.height * 0.02),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => loginPageEO()),
+                          );
+                        },
+                        child: Text(
+                          "Sudah punya akun? Login",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ),
+                      SizedBox(height: screenSize.height * 0.05),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-          if (!isKeyboardVisible)
-            buildCustomButton(
-              buttonText: "Buat Akun",
-              belowText: "Sudah punya akun?",
-              navigateTo: HomePage(),
-              navigateToStatus: loginPageEO(),
-              context: context,
-              status: 'Login',
-              onPressed: _createAccount,
-              isLoading: _isLoading,
-            ),
         ],
       ),
     );
