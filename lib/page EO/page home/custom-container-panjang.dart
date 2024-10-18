@@ -18,12 +18,11 @@ Widget BuildContainerPanjang(String imagePath, String Title, String Sub) {
               height: 80,
               margin: EdgeInsets.all(7),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.asset(
-                  imagePath,
-                  fit: BoxFit.cover,
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.network(
+                    imagePath,
+                    fit: BoxFit.cover,
+                  )),
             ),
             SizedBox(
               width: 15,
