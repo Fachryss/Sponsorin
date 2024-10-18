@@ -203,6 +203,7 @@ class _HomepageState extends State<Homepage> {
                 SizedBox(height: 15),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+                  // scrollDirection: Axis.horizontal,
                   child: Row(
                     children: recommendedBusinesses
                         .map((business) => Padding(

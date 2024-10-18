@@ -266,6 +266,9 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
     final screenSize = MediaQuery.of(context).size;
     final bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
 
+    // Conditionally apply bottom padding
+    final double bottomPadding = screenHeight > 600 ? 120 : screenHeight * 0.1;
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(

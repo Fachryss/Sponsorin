@@ -39,6 +39,7 @@ dependencies:
   printing: ^5.9.3
   path_provider: ^2.0.13
   universal_html: ^2.0.8
+  intl_phone_field: ^3.2.0
   file_picker: ^7.0.2
   firebase_core: ^2.24.2
   firebase_auth: ^4.16.0
@@ -84,6 +85,9 @@ flutter:
     - image/AI-gen.png
     - image/upload.png
     - image/drive.png
+    - image/google.png
+    - image/mail-check.png
+    - image/event_available.png
 
   
   # An image asset can refer to one or more resolution-specific "variants", see
