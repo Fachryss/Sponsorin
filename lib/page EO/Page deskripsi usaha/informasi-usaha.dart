@@ -111,10 +111,11 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(244, 244, 244, 100),
+backgroundColor: Colors.transparent,
+        elevation: 0,
         title: Text(
           "Details",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87),
         ),
         centerTitle: true,
         leading: Padding(

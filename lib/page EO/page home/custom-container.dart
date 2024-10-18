@@ -20,7 +20,7 @@ Widget CustomContainerBerdiri(
           margin: EdgeInsets.all(7),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
-            child: Image.asset(
+            child: Image.network(
               imagePath,
               fit: BoxFit.cover,
             ),

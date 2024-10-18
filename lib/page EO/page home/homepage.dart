@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sponsorin/page%20EO/page%20home/custom-container-panjang.dart';
 import 'package:sponsorin/page%20EO/page%20home/custom-container.dart';
@@ -13,50 +14,56 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   String selectedCategory = "Retail";
+  bool isLoading = true;
+  String? error;
 
-  // Data usaha berdasarkan kategori
-  final Map<String, List<Map<String, String>>> businessData = {
-    "Retail": [
-      {
-        "image": "image/ibox.png",
-        "title": "iBox",
-        "subtitle": "iBox adalah reseller premium Apple terkemuka di Indonesia."
-      },
-      {
-        "image": "image/informa.png",
-        "title": "Informa",
-        "subtitle": "Retail Informa"
-      },
-    ],
-    "Makanan": [
-      {
-        "image": "image/warungWareg.png",
-        "title": "Warung Wareg",
-        "subtitle":
-            "Menawarkan makanan tradisional Indonesia dengan harga terjangkau"
-      },
-      {
-        "image": "image/aqua.png",
-        "title": "Aqua",
-        "subtitle": "Aqua adalah air mineral yang sudah dikenal sejak lama"
-      },
-    ],
-    "Jasa": [
-      {
-        "image": "image/hisana.jpeg",
-        "title": "Hisana",
-        "subtitle":
-            "Hisana Fried Chicken adalah merek ayam goreng krispi buatan asli anak bangsa yang enaknya disuka di Indonesia."
-      },
-      {
-        "image": "image/kfc-logo.png",
-        "title": "KFC",
-        "subtitle":
-            "KFC (Kentucky Fried Chicken) adalah jaringan restoran cepat saji asal Amerika Serikat yang terkenal dengan ayam gorengnya."
-      },
-    ],
-    // Tambahkan data untuk kategori lainnya
-  };
+  Map<String, List<Map<String, String>>> businessData = {};
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDataFromFirestore(); // Fetch data saat inisialisasi
+  }
+
+  // Fungsi untuk fetch data dari Firestore
+  Future<void> fetchDataFromFirestore() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('Companies').get();
+      print(
+          "Data fetched from Firestore: ${querySnapshot.docs.length} documents"); // Tambahkan log ini
+
+      querySnapshot.docs.forEach((doc) {
+        var companyData = doc.data() as Map<String, dynamic>;
+        print("Company data: $companyData"); // Tambahkan log ini
+
+        String category = companyData['category'] ?? "Unknown";
+        String image = companyData['image'] ?? "";
+        String name = companyData['name'] ?? "";
+        String subtitle = companyData['subtitle'] ?? "";
+
+        if (businessData.containsKey(category)) {
+          businessData[category]!.add({
+            "image": image,
+            "title": name,
+            "subtitle": subtitle,
+          });
+        } else {
+          businessData[category] = [
+            {
+              "image": image,
+              "title": name,
+              "subtitle": subtitle,
+            }
+          ];
+        }
+      });
+
+      setState(() {});
+    } catch (e) {
+      print("Error fetching data from Firestore: $e");
+    }
+  }
 
   Widget _categoryButton(String text, bool isSelected, IconData icon) {
     return ElevatedButton(
@@ -108,7 +115,8 @@ class _HomepageState extends State<Homepage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(244, 244, 244, 100),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         actions: [
           Padding(
             padding: const EdgeInsets.only(
@@ -151,8 +159,9 @@ class _HomepageState extends State<Homepage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CustomText(
-                  text: "Selamat Pagi Ryo",
+                CustomText(
+                  text: getGreeting() +
+                      " Ryo", // Menggunakan fungsi getGreeting()
                   style: CustomTextStyles.title,
                 ),
                 SizedBox(height: 5),
@@ -227,5 +236,19 @@ class _HomepageState extends State<Homepage> {
         ),
       ),
     );
+  }
+
+  String getGreeting() {
+    var hour = DateTime.now().hour;
+
+    if (hour >= 5 && hour < 12) {
+      return 'Selamat Pagi';
+    } else if (hour >= 12 && hour < 15) {
+      return 'Selamat Siang';
+    } else if (hour >= 15 && hour < 18) {
+      return 'Selamat Sore';
+    } else {
+      return 'Selamat Malam';
+    }
   }
 }

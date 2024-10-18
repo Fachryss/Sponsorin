@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-Widget buildTextField(String input) {
+Widget buildTextField(String input, {required TextEditingController controller}) {
   return Opacity(
     opacity: 0.85,
     child: Container(
       width: 350,
       height: 52,
       child: TextField(
+        controller: controller,
         style: TextStyle(
           color: Colors.white,
           fontSize: 16,
@@ -67,9 +68,14 @@ Widget buildUploadField(String? fileName, VoidCallback pickFile) {
 }
 
 class PasswordField extends StatefulWidget {
+  final TextEditingController controller;
+
+  const PasswordField({Key? key, required this.controller}) : super(key: key);
+
   @override
   _PasswordFieldState createState() => _PasswordFieldState();
 }
+
 
 class _PasswordFieldState extends State<PasswordField> {
   bool _isPasswordVisible = false;
@@ -91,6 +97,7 @@ class _PasswordFieldState extends State<PasswordField> {
             width: 350,
             height: 52,
             child: TextField(
+              controller: widget.controller,
               obscureText: !_isPasswordVisible,
               style: const TextStyle(
                 color: Colors.white,
@@ -111,9 +118,7 @@ class _PasswordFieldState extends State<PasswordField> {
                 contentPadding: const EdgeInsets.fromLTRB(23, 0, 0, 0),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _isPasswordVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off,
+                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                     color: Colors.white,
                   ),
                   onPressed: _togglePasswordVisibility,
@@ -127,13 +132,17 @@ class _PasswordFieldState extends State<PasswordField> {
   }
 }
 
-Widget buildCustomButton(
-    {required String buttonText,
-    required String belowText,
-    required String status,
-    required Widget navigateTo,
-    required Widget navigateToStatus,
-    required BuildContext context}) {
+
+Widget buildCustomButton({
+  required String buttonText,
+  required String belowText,
+  required String status,
+  required Widget navigateTo,
+  required Widget navigateToStatus,
+  required BuildContext context,
+  required VoidCallback onPressed,
+  required bool isLoading,
+}) {
   return Container(
     child: Padding(
       padding: EdgeInsets.fromLTRB(24, 20, 24, 50),
@@ -147,32 +156,26 @@ Widget buildCustomButton(
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      backgroundColor: Color.fromARGB(255, 255, 255, 255),
-                      minimumSize: Size(300, 50)),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => navigateTo,
-                      ),
-                    );
-                  },
-                  child: Text(
-                    buttonText,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 24,
+                    padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
+                    backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                    minimumSize: Size(300, 50),
                   ),
+                  onPressed: isLoading ? null : onPressed,
+                  child: isLoading
+                      ? CircularProgressIndicator()
+                      : Text(
+                          buttonText,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 24,
+                          ),
+                        ),
                 ),
-                SizedBox(
-                  height: 15,
-                ),
+                SizedBox(height: 15),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -180,13 +183,12 @@ Widget buildCustomButton(
                     Text(
                       belowText,
                       style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w200,
-                          color: Colors.white),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w200,
+                        color: Colors.white,
+                      ),
                     ),
-                    SizedBox(
-                      width: 5,
-                    ),
+                    SizedBox(width: 5),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
