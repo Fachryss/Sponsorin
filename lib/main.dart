@@ -1,4 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:sponsorin/page%20EO/add%20event/form-detail-event.dart';
+import 'package:sponsorin/page%20EO/page%20proses/proses-add-event.dart';
+import 'package:sponsorin/page%20EO/page%20proses/proses-kerja-sama.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:sponsorin/auth/auth.dart';
@@ -32,7 +35,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         textTheme: const TextTheme(),
       ),
-      home: auth(),
+      home: InformasiUsaha(),
     );
   }
 }

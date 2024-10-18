@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/deskripsi-usaha.dart';
+import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/review.dart';
 import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/title.dart';
 import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
 import 'package:sponsorin/style/textstyle.dart';
@@ -30,7 +31,7 @@ Widget _getContent() {
     return buildDescriptionCard(
         "Warung Wareg adalah tempat makan yang menyajikan hidangan khas Indonesia dengan cita rasa lokal, seperti nasi campur dan ayam goreng. Dengan suasana sederhana dan harga terjangkau, warung ini menjadi favorit bagi warga lokal dan wisatawan.\n\nWarung Wareg juga dikenal karena pelayanannya yang ramah serta porsi yang besar. Menu bervariasi dan rasa autentik membuatnya menjadi destinasi kuliner yang wajib dikunjungi bagi pencinta masakan Indonesia.");
   } else if (selectedCategory == "reviews") {
-    return Text("This is the reviews content.");
+    return ReviewUsaha();
   }
   return Container(); // Fallback for any other category
 }

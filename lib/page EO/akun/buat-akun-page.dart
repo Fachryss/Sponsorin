@@ -69,9 +69,16 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
 
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double screenHeight = screenSize.height;
+    final double screenWidth = screenSize.width;
+
     // Detect if keyboard is visible
     final bool isKeyboardVisible =
         MediaQuery.of(context).viewInsets.bottom != 0;
+
+    // Conditionally apply bottom padding
+    final double bottomPadding = screenHeight > 600 ? 120 : screenHeight * 0.1;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -79,12 +86,12 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
-          padding: const EdgeInsets.only(
-            left: 24.0,
-          ), // Adjust the left padding as needed
+          padding: EdgeInsets.only(
+            left: screenWidth * 0.05, // Adjust padding relative to screen width
+          ),
           child: IconButton(
             icon: Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.white, size: 30),
+                color: Colors.white, size: screenHeight * 0.03),
             onPressed: () {
               Navigator.push(
                 context,
@@ -116,7 +123,13 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
             width: double.infinity,
             color: Colors.black.withOpacity(0.68),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 120, 24, 0),
+              padding: EdgeInsets.fromLTRB(
+                screenWidth *
+                    0.06, // Horizontal padding relative to screen size
+                screenHeight * 0.15, // Top padding
+                screenWidth * 0.06, // Bottom padding
+                bottomPadding, // Conditional bottom padding
+              ),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,50 +138,51 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
                     Center(
                       child: Column(
                         children: [
-                          const Text(
+                          Text(
                             "Selamat Datang",
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 32,
+                                fontSize:
+                                    screenHeight * 0.04, // Responsive font size
                                 fontWeight: FontWeight.w600),
                           ),
-                          const SizedBox(
-                            height: 8,
+                          SizedBox(
+                            height: screenHeight * 0.02,
                           ),
-                          const Text(
+                          Text(
                             "Silakan membuat profile anda",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 20,
+                              fontSize: screenHeight * 0.025,
                               fontWeight: FontWeight.w100,
                             ),
                           ),
-                          const SizedBox(
-                            height: 60,
+                          SizedBox(
+                            height: screenHeight * 0.05,
                           ),
                           buildTextField("Nama"),
-                          const SizedBox(
-                            height: 22,
+                          SizedBox(
+                            height: screenHeight * 0.03,
                           ),
                           buildTextField("Email"),
-                          const SizedBox(
-                            height: 22,
+                          SizedBox(
+                            height: screenHeight * 0.03,
                           ),
                           buildTextField("Nomor Telepon"),
-                          const SizedBox(
-                            height: 22,
+                          SizedBox(
+                            height: screenHeight * 0.03,
                           ),
                           buildTextField("Alamat Kantor"),
-                          const SizedBox(
-                            height: 22,
+                          SizedBox(
+                            height: screenHeight * 0.03,
                           ),
                           buildUploadField(_fileName, pickFile),
-                          const SizedBox(
-                            height: 22,
+                          SizedBox(
+                            height: screenHeight * 0.03,
                           ),
                           PasswordField(),
-                          const SizedBox(
-                            height: 78,
+                          SizedBox(
+                            height: screenHeight * 0.08,
                           ),
                         ],
                       ),
@@ -178,14 +192,14 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
               ),
             ),
           ),
-          if (!isKeyboardVisible) // Only show button if keyboard is not visible
+          if (!isKeyboardVisible)
             buildCustomButton(
               buttonText: "Buat Akun",
               belowText: "Sudah punya akun?",
               navigateTo: HomePage(),
-              navigateToStatus:
-                  loginPageEO(), // Replace with your actual login page
-              context: context, status: 'Login',
+              navigateToStatus: loginPageEO(),
+              context: context,
+              status: 'Login',
             ),
         ],
       ),
