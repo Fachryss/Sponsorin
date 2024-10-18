@@ -25,46 +25,45 @@ class _HomepageState extends State<Homepage> {
     fetchDataFromFirestore(); // Fetch data saat inisialisasi
   }
 
-  
-
   // Fungsi untuk fetch data dari Firestore
   Future<void> fetchDataFromFirestore() async {
-  try {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('Companies').get();
-    print("Data fetched from Firestore: ${querySnapshot.docs.length} documents"); // Tambahkan log ini
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('Companies').get();
+      print(
+          "Data fetched from Firestore: ${querySnapshot.docs.length} documents"); // Tambahkan log ini
 
-    querySnapshot.docs.forEach((doc) {
-      var companyData = doc.data() as Map<String, dynamic>;
-      print("Company data: $companyData"); // Tambahkan log ini
+      querySnapshot.docs.forEach((doc) {
+        var companyData = doc.data() as Map<String, dynamic>;
+        print("Company data: $companyData"); // Tambahkan log ini
 
-      String category = companyData['category'] ?? "Unknown";
-      String image = companyData['image'] ?? "";
-      String name = companyData['name'] ?? "";
-      String subtitle = companyData['subtitle'] ?? "";
+        String category = companyData['category'] ?? "Unknown";
+        String image = companyData['image'] ?? "";
+        String name = companyData['name'] ?? "";
+        String subtitle = companyData['subtitle'] ?? "";
 
-      if (businessData.containsKey(category)) {
-        businessData[category]!.add({
-          "image": image,
-          "title": name,
-          "subtitle": subtitle,
-        });
-      } else {
-        businessData[category] = [
-          {
+        if (businessData.containsKey(category)) {
+          businessData[category]!.add({
             "image": image,
             "title": name,
             "subtitle": subtitle,
-          }
-        ];
-      }
-    });
+          });
+        } else {
+          businessData[category] = [
+            {
+              "image": image,
+              "title": name,
+              "subtitle": subtitle,
+            }
+          ];
+        }
+      });
 
-    setState(() {});
-  } catch (e) {
-    print("Error fetching data from Firestore: $e");
+      setState(() {});
+    } catch (e) {
+      print("Error fetching data from Firestore: $e");
+    }
   }
-}
-
 
   Widget _categoryButton(String text, bool isSelected, IconData icon) {
     return ElevatedButton(
@@ -160,8 +159,9 @@ class _HomepageState extends State<Homepage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CustomText(
-                  text: "Selamat Pagi Ryo",
+                CustomText(
+                  text: getGreeting() +
+                      " Ryo", // Menggunakan fungsi getGreeting()
                   style: CustomTextStyles.title,
                 ),
                 SizedBox(height: 5),
@@ -235,5 +235,19 @@ class _HomepageState extends State<Homepage> {
         ),
       ),
     );
+  }
+
+  String getGreeting() {
+    var hour = DateTime.now().hour;
+
+    if (hour >= 5 && hour < 12) {
+      return 'Selamat Pagi';
+    } else if (hour >= 12 && hour < 15) {
+      return 'Selamat Siang';
+    } else if (hour >= 15 && hour < 18) {
+      return 'Selamat Sore';
+    } else {
+      return 'Selamat Malam';
+    }
   }
 }
