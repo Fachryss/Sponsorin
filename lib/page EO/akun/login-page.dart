@@ -49,7 +49,8 @@ class _loginPageEOState extends State<loginPageEO> {
     });
 
     try {
-      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      final UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
@@ -110,6 +111,7 @@ class _loginPageEOState extends State<loginPageEO> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
     final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return Scaffold(
@@ -118,9 +120,10 @@ class _loginPageEOState extends State<loginPageEO> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
-          padding: const EdgeInsets.only(left: 24.0, top: 18),
+          padding: const EdgeInsets.only(left: 24.0),
           child: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 30),
+            icon: Icon(Icons.arrow_back_ios_new_rounded,
+                color: Colors.white, size: 30),
             onPressed: () {
               Navigator.push(
                 context,
@@ -151,59 +154,115 @@ class _loginPageEOState extends State<loginPageEO> {
             height: double.infinity,
             width: double.infinity,
             color: Colors.black.withOpacity(0.68),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 120, 24, 0),
+            child: SafeArea(
               child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Column(
-                        children: [
-                          const Text(
-                            "Selamat Datang",
-                            style: TextStyle(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: screenSize.height * 0.05),
+                        Text(
+                          "Selamat Datang",
+                          style: TextStyle(
                               color: Colors.white,
-                              fontSize: 32,
-                              fontWeight: FontWeight.w600
-                            ),
+                              fontSize: screenSize.width * 0.08,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        SizedBox(height: screenSize.height * 0.01),
+                        Text(
+                          "Mari login ke akun anda",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: screenSize.width * 0.04,
+                            fontWeight: FontWeight.w300,
                           ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            "Mari login ke akun anda",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                          const SizedBox(height: 60),
-                          buildTextField("Email", controller: _emailController),
-                          const SizedBox(height: 22),
-                          PasswordField(controller: _passwordController),
-                          const SizedBox(height: 78),
-                        ],
-                      ),
-                    )
-                  ],
+                        ),
+                        // SizedBox(height: screenSize.height * 0.05),
+                        // RepaintBoundary(
+                        //   key: _avatarKey,
+                        //   child: RandomAvatar(_randomAvatarSeed, height: screenSize.width * 0.25, width: screenSize.width * 0.25),
+                        // ),
+                        SizedBox(height: screenSize.height * 0.05),
+                        buildTextField("Email", controller: _emailController),
+                        PasswordField(controller: _passwordController),
+                        SizedBox(
+                          height: 200,
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-          Visibility(
-            visible: !isKeyboardVisible,
-            child: buildCustomButton(
-              buttonText: "Masuk",
-              belowText: "Belum punya akun?",
-              navigateTo: HomePage(),
-              navigateToStatus: BuatAkunEO(),
-              context: context,
-              status: 'Sign Up',
-              onPressed: _signIn,
-              isLoading: _isLoading,
-            ),
-          ),
+          if (!isKeyboardVisible)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.fromLTRB(24, 20, 24, 50),
+                color: Colors.transparent,
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                        backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                        minimumSize: Size(300, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: _isLoading ? null : _signIn,
+                      child: _isLoading
+                          ? CircularProgressIndicator()
+                          : Text(
+                              "Masuk",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 24,
+                              ),
+                            ),
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BuatAkunEO()),
+                          );
+                        },
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Belum punya akun?",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.white,
+                              ),
+                            ),
+                          ],
+                        )),
+                  ],
+                ),
+              ),
+            )
         ],
       ),
     );

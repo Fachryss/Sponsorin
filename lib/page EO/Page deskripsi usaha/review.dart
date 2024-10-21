@@ -1,35 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/rating_progress_indicator.dart';
+import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/rating_star.dart';
+import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/user_review_card.dart';
+import 'package:universal_html/js.dart';
 
-class ReviewUsaha extends StatefulWidget {
-  const ReviewUsaha({super.key});
-
-  @override
-  State<ReviewUsaha> createState() => _ReviewUsahaState();
-}
-
-class _ReviewUsahaState extends State<ReviewUsaha> {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
+Widget buildReviewPage() {
+  return SingleChildScrollView(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "4.8",
-          style: Theme.of(context).textTheme.displayLarge,
-        ),
-        Column(
-          children: [
-            Row(
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8), color: Colors.white),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(12, 18, 10, 18),
+            child: Column(
               children: [
-                Text(
-                  '5',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                LinearProgressIndicator()
+                TOverallProductRating(),
               ],
-            )
-          ],
-        )
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 35,
+        ),
+        UserReviewCard()
       ],
-    );
-  }
+    ),
+  );
 }

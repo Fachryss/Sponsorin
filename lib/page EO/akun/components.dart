@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
-Widget buildTextField(String input, {required TextEditingController controller}) {
+Widget buildTextField(String input,
+    {required TextEditingController controller}) {
   return Opacity(
     opacity: 0.85,
     child: Container(
+      margin: EdgeInsets.fromLTRB(0, 0, 0, 22),
       width: 350,
       height: 52,
       child: TextField(
@@ -17,7 +19,7 @@ Widget buildTextField(String input, {required TextEditingController controller})
           fillColor: Color.fromRGBO(78, 75, 76, 65),
           hintText: input,
           hintStyle: TextStyle(
-            color: Colors.white70,
+            color: Colors.white,
             fontSize: 14,
             fontWeight: FontWeight.w100,
           ),
@@ -49,7 +51,7 @@ Widget buildUploadField(String? fileName, VoidCallback pickFile) {
           fillColor: const Color.fromRGBO(78, 75, 76, 65),
           hintText: fileName ?? "Dokumen Izin EO",
           hintStyle: const TextStyle(
-            color: Colors.white70,
+            color: Colors.white,
             fontSize: 14,
             fontWeight: FontWeight.w100,
           ),
@@ -75,7 +77,6 @@ class PasswordField extends StatefulWidget {
   @override
   _PasswordFieldState createState() => _PasswordFieldState();
 }
-
 
 class _PasswordFieldState extends State<PasswordField> {
   bool _isPasswordVisible = false;
@@ -108,7 +109,7 @@ class _PasswordFieldState extends State<PasswordField> {
                 fillColor: const Color.fromRGBO(78, 75, 76, 65),
                 hintText: "Password",
                 hintStyle: const TextStyle(
-                  color: Colors.white70,
+                  color: Colors.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w100,
                 ),
@@ -118,7 +119,9 @@ class _PasswordFieldState extends State<PasswordField> {
                 contentPadding: const EdgeInsets.fromLTRB(23, 0, 0, 0),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    _isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
                     color: Colors.white,
                   ),
                   onPressed: _togglePasswordVisibility,
@@ -131,7 +134,6 @@ class _PasswordFieldState extends State<PasswordField> {
     );
   }
 }
-
 
 Widget buildCustomButton({
   required String buttonText,

@@ -25,13 +25,13 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
-  
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  
+
   bool _isPasswordVisible = false;
   bool _isLoading = false;
 
@@ -93,9 +93,11 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
 
   Future<Uint8List?> _capturePng() async {
     try {
-      RenderRepaintBoundary boundary = _avatarKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      RenderRepaintBoundary boundary = _avatarKey.currentContext!
+          .findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
       print("Avatar captured successfully");
       return byteData?.buffer.asUint8List();
     } catch (e) {
@@ -104,7 +106,8 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
     }
   }
 
-  Future<String?> _uploadAvatarToStorage(Uint8List imageData, String userId) async {
+  Future<String?> _uploadAvatarToStorage(
+      Uint8List imageData, String userId) async {
     try {
       Reference ref = _storage.ref().child('user_avatars').child('$userId.png');
       UploadTask uploadTask = ref.putData(imageData);
@@ -124,7 +127,8 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
     });
 
     try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
@@ -132,9 +136,10 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
       if (userCredential.user != null) {
         Uint8List? imageData = await _capturePng();
         String? avatarUrl;
-        
+
         if (imageData != null) {
-          avatarUrl = await _uploadAvatarToStorage(imageData, userCredential.user!.uid);
+          avatarUrl =
+              await _uploadAvatarToStorage(imageData, userCredential.user!.uid);
           if (avatarUrl == null) {
             print("Failed to upload avatar");
           }
@@ -179,82 +184,77 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
     }
   }
 
-  Widget _buildTextField(String input, TextEditingController controller, {bool isPassword = false}) {
-    return Opacity(opacity: 0.85, child: 
-    Container(
-      width: 350,
-      height: 52,
-      // margin: EdgeInsets.symmetric(vertical: 10),
-      child: TextField(
-        controller: controller,
-        obscureText: isPassword && !_isPasswordVisible,
-        style:TextStyle(color: Colors.white, fontSize: 16),
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Color.fromRGBO(78, 75, 76, 65),
-          hintText: input,
-          hintStyle: TextStyle(
-            color: Colors.white70,
-            fontSize: 14,
-            fontWeight: FontWeight.w100,
+  Widget _buildTextField(String input, TextEditingController controller,
+      {bool isPassword = false}) {
+    return Opacity(
+      opacity: 0.85,
+      child: Container(
+        margin: EdgeInsets.fromLTRB(0, 0, 0, 22),
+        width: 350,
+        height: 52,
+        // margin: EdgeInsets.symmetric(vertical: 10),
+        child: TextField(
+          controller: controller,
+          obscureText: isPassword && !_isPasswordVisible,
+          style: TextStyle(color: Colors.white, fontSize: 16),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Color.fromRGBO(78, 75, 76, 65),
+            hintText: input,
+            hintStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w100,
+            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
+            contentPadding: EdgeInsets.fromLTRB(23, 0, 0, 0),
+            suffixIcon: isPassword
+                ? IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: Colors.white,
+                    ),
+                    onPressed: _togglePasswordVisibility,
+                  )
+                : null,
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6)
-          ),
-          contentPadding: EdgeInsets.fromLTRB(23, 0, 0, 0)
         ),
       ),
-      // child: TextField(
-      //   controller: controller,
-      //   obscureText: isPassword && !_isPasswordVisible,
-      //   style: TextStyle(color: Colors.white),
-      //   decoration: InputDecoration(
-      //     labelText: label,
-      //     labelStyle: TextStyle(color: Colors.white70),
-      //     enabledBorder: OutlineInputBorder(
-      //       borderSide: BorderSide(color: Colors.white70),
-      //       borderRadius: BorderRadius.circular(10),
-      //     ),
-      //     focusedBorder: OutlineInputBorder(
-      //       borderSide: BorderSide(color: Colors.white),
-      //       borderRadius: BorderRadius.circular(10),
-      //     ),
-      //     suffixIcon: isPassword
-      //         ? IconButton(
-      //             icon: Icon(
-      //               _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-      //               color: Colors.white70,
-      //             ),
-      //             onPressed: _togglePasswordVisibility,
-      //           )
-      //         : null,
-      //   ),
-      ),
     );
-    
   }
 
   Widget _buildUploadField() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          primary: Colors.white24,
-          onPrimary: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+    return Opacity(
+      opacity: 0.85,
+      child: SizedBox(
+        width: 350,
+        height: 52,
+        child: TextField(
+          onTap: pickFile,
+          readOnly: true,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
           ),
-        ),
-        onPressed: pickFile,
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.upload_file),
-              SizedBox(width: 10),
-              Text(_fileName ?? 'Upload Dokumen'),
-            ],
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Color.fromRGBO(78, 75, 76, 65),
+            hintText: _fileName ?? 'Dokumen Izin EO',
+            hintStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w100,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
+            contentPadding: const EdgeInsets.fromLTRB(23, 0, 0, 0),
+            suffixIcon: const Icon(
+              Icons.file_upload_outlined,
+              color: Colors.white,
+            ),
           ),
         ),
       ),
@@ -264,11 +264,9 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
 
-    // Conditionally apply bottom padding
-    // final double bottomPadding = screenHeight > 600 ? 120 : screenHeight * 0.1;
-
+    final bool isKeyboardVisible =
+        MediaQuery.of(context).viewInsets.bottom != 0;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -277,7 +275,8 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 24.0),
           child: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 30),
+            icon: Icon(Icons.arrow_back_ios_new_rounded,
+                color: Colors.white, size: 30),
             onPressed: () {
               Navigator.push(
                 context,
@@ -311,277 +310,121 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
             child: SafeArea(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(height: screenSize.height * 0.05),
-                      Text(
-                        "Selamat Datang",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: screenSize.width * 0.08,
-                          fontWeight: FontWeight.w600
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: screenSize.height * 0.05),
+                        Text(
+                          "Selamat Datang",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: screenSize.width * 0.08,
+                              fontWeight: FontWeight.w600),
                         ),
-                      ),
-                      SizedBox(height: screenSize.height * 0.01),
-                      Text(
-                        "Silakan membuat profile anda",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: screenSize.width * 0.04,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                      // SizedBox(height: screenSize.height * 0.05),
-                      // RepaintBoundary(
-                      //   key: _avatarKey,
-                      //   child: RandomAvatar(_randomAvatarSeed, height: screenSize.width * 0.25, width: screenSize.width * 0.25),
-                      // ),
-                      SizedBox(height: screenSize.height * 0.03),
-                      _buildTextField("Nama", _nameController),
-                      _buildTextField("Email", _emailController),
-                      _buildTextField("Nomor Telepon", _phoneController),
-                      _buildTextField("Alamat Kantor", _addressController),
-                      _buildTextField("Password", _passwordController, isPassword: true),
-                      _buildUploadField(),
-                      SizedBox(height: screenSize.height * 0.05),
-                      if (!isKeyboardVisible)
-                        // Visibility(
-                        //   visible: !isKeyboardVisible,
-                        //   child: buildCustomButton(
-                        //     buttonText: "Buat Akun",
-                        //     belowText: "Belum punya akun?",
-                        //     navigateTo: HomePage(),
-                        //     navigateToStatus: BuatAkunEO(),
-                        //     context: context,
-                        //     status: 'Sign Up',
-                        //     onPressed: _signIn,
-                        //     isLoading: _isLoading,
-                        //   ),
-                        // ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.blue,
-                            onPrimary: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        SizedBox(height: screenSize.height * 0.01),
+                        Text(
+                          "Silakan membuat profile anda",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: screenSize.width * 0.04,
+                            fontWeight: FontWeight.w300,
                           ),
-                          onPressed: _isLoading ? null : _createAccount,
-                          child: _isLoading
-                              ? CircularProgressIndicator(color: Colors.white)
-                              : Text("Buat Akun", style: TextStyle(fontSize: 18)),
                         ),
-                      SizedBox(height: screenSize.height * 0.02),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => loginPageEO()),
-                          );
-                        },
-                        child: Text(
-                          "Sudah punya akun? Login",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        // SizedBox(height: screenSize.height * 0.05),
+                        // RepaintBoundary(
+                        //   key: _avatarKey,
+                        //   child: RandomAvatar(_randomAvatarSeed, height: screenSize.width * 0.25, width: screenSize.width * 0.25),
+                        // ),
+                        SizedBox(height: screenSize.height * 0.05),
+                        _buildTextField("Nama", _nameController),
+                        _buildTextField("Email", _emailController),
+                        _buildTextField("Nomor Telepon", _phoneController),
+                        _buildTextField("Alamat Kantor", _addressController),
+                        _buildUploadField(),
+                        SizedBox(
+                          height: 22,
                         ),
-                      ),
-                      SizedBox(height: screenSize.height * 0.05),
-                    ],
+                        _buildTextField("Password", _passwordController,
+                            isPassword: true),
+                        SizedBox(
+                          height: 200,
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
+          if (!isKeyboardVisible)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.fromLTRB(24, 20, 24, 50),
+                color: Colors.transparent,
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                        backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                        minimumSize: Size(300, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: _isLoading ? null : _createAccount,
+                      child: _isLoading
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : Text(
+                              "Buat Akun",
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => loginPageEO()),
+                          );
+                        },
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Sudah punya akun?",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "Login",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.white,
+                              ),
+                            ),
+                          ],
+                        )),
+                  ],
+                ),
+              ),
+            )
         ],
       ),
     );
   }
 }
-
-// Update the buildTextField and PasswordField widgets in components.dart if not already updated
-// Widget buildTextField(String input, {required TextEditingController controller}) {
-//   return Opacity(
-//     opacity: 0.85,
-//     child: Container(
-//       width: 350,
-//       height: 52,
-//       child: TextField(
-//         controller: controller,
-//         style: TextStyle(
-//           color: Colors.white,
-//           fontSize: 16,
-//         ),
-//         decoration: InputDecoration(
-//           filled: true,
-//           fillColor: Color.fromRGBO(78, 75, 76, 65),
-//           hintText: input,
-//           hintStyle: TextStyle(
-//             color: Colors.white70,
-//             fontSize: 14,
-//             fontWeight: FontWeight.w100,
-//           ),
-//           border: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(6),
-//           ),
-//           contentPadding: EdgeInsets.fromLTRB(23, 0, 0, 0),
-//         ),
-//       ),
-//     ),
-//   );
-// }
-
-// class PasswordField extends StatefulWidget {
-//   final TextEditingController controller;
-
-//   const PasswordField({Key? key, required this.controller}) : super(key: key);
-
-//   @override
-//   _PasswordFieldState createState() => _PasswordFieldState();
-// }
-
-// class _PasswordFieldState extends State<PasswordField> {
-//   bool _isPasswordVisible = false;
-
-//   void _togglePasswordVisibility() {
-//     setState(() {
-//       _isPasswordVisible = !_isPasswordVisible;
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: <Widget>[
-//         Opacity(
-//           opacity: 0.85,
-//           child: SizedBox(
-//             width: 350,
-//             height: 52,
-//             child: TextField(
-//               controller: widget.controller,
-//               obscureText: !_isPasswordVisible,
-//               style: const TextStyle(
-//                 color: Colors.white,
-//                 fontSize: 18,
-//               ),
-//               decoration: InputDecoration(
-//                 filled: true,
-//                 fillColor: const Color.fromRGBO(78, 75, 76, 65),
-//                 hintText: "Password",
-//                 hintStyle: const TextStyle(
-//                   color: Colors.white70,
-//                   fontSize: 14,
-//                   fontWeight: FontWeight.w100,
-//                 ),
-//                 border: OutlineInputBorder(
-//                   borderRadius: BorderRadius.circular(6),
-//                 ),
-//                 contentPadding: const EdgeInsets.fromLTRB(23, 0, 0, 0),
-//                 suffixIcon: IconButton(
-//                   icon: Icon(
-//                     _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-//                     color: Colors.white,
-//                   ),
-//                   onPressed: _togglePasswordVisibility,
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-// Update the buildCustomButton in components.dart if not already updated
-// Widget buildCustomButton({
-//   required String buttonText,
-//   required String belowText,
-//   required String status,
-//   required Widget navigateTo,
-//   required Widget navigateToStatus,
-//   required BuildContext context,
-//   required VoidCallback onPressed,
-//   required bool isLoading,
-// }) {
-//   return Container(
-//     child: Padding(
-//       padding: EdgeInsets.fromLTRB(24, 20, 24, 50),
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.end,
-//         children: [
-//           Center(
-//             child: Column(
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               crossAxisAlignment: CrossAxisAlignment.center,
-//               children: [
-//                 ElevatedButton(
-//                   style: ElevatedButton.styleFrom(
-//                     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(12),
-//                     ),
-//                     backgroundColor: Color.fromARGB(255, 255, 255, 255),
-//                     minimumSize: Size(300, 50),
-//                   ),
-//                   onPressed: isLoading ? null : onPressed,
-//                   child: isLoading
-//                       ? CircularProgressIndicator()
-//                       : Text(
-//                           buttonText,
-//                           style: TextStyle(
-//                             color: Colors.black,
-//                             fontWeight: FontWeight.w600,
-//                             fontSize: 24,
-//                           ),
-//                         ),
-//                 ),
-//                 SizedBox(height: 15),
-//                 Row(
-//                   crossAxisAlignment: CrossAxisAlignment.center,
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: [
-//                     Text(
-//                       belowText,
-//                       style: TextStyle(
-//                         fontSize: 14,
-//                         fontWeight: FontWeight.w200,
-//                         color: Colors.white,
-//                       ),
-//                     ),
-//                     SizedBox(width: 5),
-//                     GestureDetector(
-//                       onTap: () {
-//                         Navigator.push(
-//                           context,
-//                           MaterialPageRoute(
-//                             builder: (context) => navigateToStatus,
-//                           ),
-//                         );
-//                       },
-//                       child: RichText(
-//                         text: TextSpan(
-//                           text: status,
-//                           style: TextStyle(
-//                             fontSize: 15,
-//                             fontWeight: FontWeight.w600,
-//                             color: Colors.white,
-//                             decoration: TextDecoration.underline,
-//                             decorationColor: Colors.white,
-//                           ),
-//                         ),
-//                       ),
-//                     )
-//                   ],
-//                 )
-//               ],
-//             ),
-//           )
-//         ],
-//       ),
-//     ),
-//   );
-// }
