@@ -1,5 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sponsorin/auth/auth.dart';
+import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/informasi-usaha.dart';
+import 'package:sponsorin/page%20EO/Search/search-page.dart';
+import 'package:sponsorin/page%20EO/add%20event/add-event.dart';
 import 'package:sponsorin/page%20EO/akun/login-page.dart';
 import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
 import 'package:sponsorin/page%20EO/profile/profile.dart';
@@ -44,8 +47,8 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = [
     Homepage(),
-    Profile(),
-    Placeholder(), // Add your other pages here
+    SearchPage(),
+    AddEvent(), // Add your other pages here
     Profile(), // Example: Placeholder, you can add actual pages
   ];
 
@@ -59,8 +62,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       // The body updates according to the selected index
-      body: _pages[_selectedIndex], 
-      
+      body: _pages[_selectedIndex],
+
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Color.fromRGBO(244, 244, 244, 100),
         type: BottomNavigationBarType.fixed, // Disable animation
