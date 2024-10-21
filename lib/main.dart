@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         textTheme: const TextTheme(),
       ),
-      home: InformasiUsaha(),
+      home: Homepage(),
     );
   }
 }

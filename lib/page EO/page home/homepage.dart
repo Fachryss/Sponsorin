@@ -41,12 +41,16 @@ class _HomepageState extends State<Homepage> {
         String image = companyData['image'] ?? "";
         String name = companyData['name'] ?? "";
         String subtitle = companyData['subtitle'] ?? "";
+        String description = companyData['description'] ?? "";
+        String address = companyData['address'] ?? "";
 
         if (businessData.containsKey(category)) {
           businessData[category]!.add({
             "image": image,
             "title": name,
             "subtitle": subtitle,
+            "description": description,
+            "address": address,
           });
         } else {
           businessData[category] = [
@@ -54,6 +58,8 @@ class _HomepageState extends State<Homepage> {
               "image": image,
               "title": name,
               "subtitle": subtitle,
+              "description": description,
+              "address": address,
             }
           ];
         }
@@ -210,7 +216,12 @@ class _HomepageState extends State<Homepage> {
                               padding: const EdgeInsets.only(right: 20),
                               child: CustomContainerBerdiri(
                                   imagePath: business["image"]!,
-                                  context: context),
+                                  context: context,
+                                  title: business["title"]!,
+                                  category: business["category"] ?? 'unknown',
+                                  address: business["address"]!, 
+                                  description: business["description"]!,
+                                  ),
                             ))
                         .toList(),
                   ),
