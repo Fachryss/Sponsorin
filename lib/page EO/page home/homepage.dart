@@ -37,16 +37,22 @@ class _HomepageState extends State<Homepage> {
         var companyData = doc.data() as Map<String, dynamic>;
         print("Company data: $companyData"); // Tambahkan log ini
 
-        String category = companyData['category'] ?? "Unknown";
+        String category = companyData['category'];
         String image = companyData['image'] ?? "";
         String name = companyData['name'] ?? "";
         String subtitle = companyData['subtitle'] ?? "";
+        String description = companyData['description'] ?? "";
+        String address = companyData['location'] ?? "";
+
+        // print("Category Value: $categoryValue")
 
         if (businessData.containsKey(category)) {
           businessData[category]!.add({
             "image": image,
             "title": name,
             "subtitle": subtitle,
+            "description": description,
+            "address": address,
           });
         } else {
           businessData[category] = [
@@ -54,6 +60,8 @@ class _HomepageState extends State<Homepage> {
               "image": image,
               "title": name,
               "subtitle": subtitle,
+              "description": description,
+              "address": address,
             }
           ];
         }
@@ -209,8 +217,13 @@ class _HomepageState extends State<Homepage> {
                         .map((business) => Padding(
                               padding: const EdgeInsets.only(right: 20),
                               child: CustomContainerBerdiri(
-                                  imagePath: business["image"]!,
-                                  context: context),
+                                imagePath: business["image"]!,
+                                context: context,
+                                title: business["title"]!,
+                                category: business["category"] ?? 'Unknown',
+                                address: business["address"]!,
+                                description: business["description"]!,
+                              ),
                             ))
                         .toList(),
                   ),
@@ -225,8 +238,16 @@ class _HomepageState extends State<Homepage> {
                   children: otherBusinesses
                       .map((business) => Padding(
                             padding: const EdgeInsets.only(bottom: 15),
-                            child: BuildContainerPanjang(business["image"]!,
-                                business["title"]!, business["subtitle"]!),
+                            child: BuildContainerPanjang(
+                              context: context, // Pass the context for navigation
+                              imagePath: business["image"]!,
+                              title: business["title"]!,
+                              sub: business["subtitle"]!,
+                              category: business["category"] ??
+                                  'Unknown', // Use ?? for default value
+                              address: business["address"]!,
+                              description: business["description"]!,
+                            ),
                           ))
                       .toList(),
                 ),
