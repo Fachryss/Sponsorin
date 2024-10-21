@@ -44,7 +44,7 @@ class _HomepageState extends State<Homepage> {
         String description = companyData['description'] ?? "";
         String address = companyData['location'] ?? "";
 
-        print("Category Value: $category");
+        // print("Category Value: $categoryValue")
 
         if (businessData.containsKey(category)) {
           businessData[category]!.add({
@@ -217,13 +217,13 @@ class _HomepageState extends State<Homepage> {
                         .map((business) => Padding(
                               padding: const EdgeInsets.only(right: 20),
                               child: CustomContainerBerdiri(
-                                  imagePath: business["image"]!,
-                                  context: context,
-                                  title: business["title"]!,
-                                  category: business["category"] ?? 'Unknown',
-                                  address: business["address"]!, 
-                                  description: business["description"]!,
-                                  ),
+                                imagePath: business["image"]!,
+                                context: context,
+                                title: business["title"]!,
+                                category: business["category"] ?? 'Unknown',
+                                address: business["address"]!,
+                                description: business["description"]!,
+                              ),
                             ))
                         .toList(),
                   ),
@@ -238,8 +238,16 @@ class _HomepageState extends State<Homepage> {
                   children: otherBusinesses
                       .map((business) => Padding(
                             padding: const EdgeInsets.only(bottom: 15),
-                            child: BuildContainerPanjang(business["image"]!,
-                                business["title"]!, business["subtitle"]!),
+                            child: BuildContainerPanjang(
+                              context: context, // Pass the context for navigation
+                              imagePath: business["image"]!,
+                              title: business["title"]!,
+                              sub: business["subtitle"]!,
+                              category: business["category"] ??
+                                  'Unknown', // Use ?? for default value
+                              address: business["address"]!,
+                              description: business["description"]!,
+                            ),
                           ))
                       .toList(),
                 ),
