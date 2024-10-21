@@ -99,7 +99,7 @@ Widget _buildOption(
             ),
           ),
           child: ClipOval(
-            child: Image.network(
+            child: Image.asset(
               imagePath,
               errorBuilder: (BuildContext context, Object exception,
                   StackTrace? stackTrace) {
@@ -168,6 +168,7 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
                   height: 396,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20.0),
+                    // bukan ini
                     child: Image.network(
                       widget.imagePath,
                       fit: BoxFit.cover,
