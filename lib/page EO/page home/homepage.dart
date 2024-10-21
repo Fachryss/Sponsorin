@@ -37,12 +37,14 @@ class _HomepageState extends State<Homepage> {
         var companyData = doc.data() as Map<String, dynamic>;
         print("Company data: $companyData"); // Tambahkan log ini
 
-        String category = companyData['category'] ?? "Unknown";
+        String category = companyData['category'];
         String image = companyData['image'] ?? "";
         String name = companyData['name'] ?? "";
         String subtitle = companyData['subtitle'] ?? "";
         String description = companyData['description'] ?? "";
-        String address = companyData['address'] ?? "";
+        String address = companyData['location'] ?? "";
+
+        print("Category Value: $category");
 
         if (businessData.containsKey(category)) {
           businessData[category]!.add({
@@ -218,7 +220,7 @@ class _HomepageState extends State<Homepage> {
                                   imagePath: business["image"]!,
                                   context: context,
                                   title: business["title"]!,
-                                  category: business["category"] ?? 'unknown',
+                                  category: business["category"] ?? 'Unknown',
                                   address: business["address"]!, 
                                   description: business["description"]!,
                                   ),

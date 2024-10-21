@@ -99,7 +99,13 @@ Widget _buildOption(
             ),
           ),
           child: ClipOval(
-            child: Image.network(imagePath),
+            child: Image.network(
+              imagePath,
+              errorBuilder: (BuildContext context, Object exception,
+                  StackTrace? stackTrace) {
+                return Text('Failed to load image');
+              },
+            ),
           ),
         ),
         SizedBox(height: 10),
@@ -162,7 +168,7 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
                   height: 396,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20.0),
-                    child: Image.asset(
+                    child: Image.network(
                       widget.imagePath,
                       fit: BoxFit.cover,
                     ),
