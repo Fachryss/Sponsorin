@@ -19,7 +19,20 @@ import 'package:path_provider/path_provider.dart';
 import 'package:googledrivehandler/googledrivehandler.dart';
 
 class InformasiUsaha extends StatefulWidget {
-  const InformasiUsaha({super.key});
+  final String businessName;
+  final String category;
+  final String address;
+  final String description;
+  final String imagePath;
+
+  const InformasiUsaha({
+    Key? key,
+    required this.businessName,
+    required this.category,
+    required this.address,
+    required this.description,
+    required this.imagePath,
+  }) : super(key: key);
 
   @override
   State<InformasiUsaha> createState() => _InformasiUsahaState();
@@ -42,10 +55,9 @@ Widget _categoryButton(String text, bool isSelected, VoidCallback onPressed) {
   );
 }
 
-Widget _getContent() {
+Widget _getContent(String selectedCategory, String description) {
   if (selectedCategory == "overview") {
-    return buildDescriptionCard(
-        "Warung Wareg adalah tempat makan yang menyajikan hidangan khas Indonesia dengan cita rasa lokal, seperti nasi campur dan ayam goreng. Dengan suasana sederhana dan harga terjangkau, warung ini menjadi favorit bagi warga lokal dan wisatawan.\n\nWarung Wareg juga dikenal karena pelayanannya yang ramah serta porsi yang besar. Menu bervariasi dan rasa autentik membuatnya menjadi destinasi kuliner yang wajib dikunjungi bagi pencinta masakan Indonesia.");
+    return buildDescriptionCard(description);
   } else if (selectedCategory == "reviews") {
     return buildReviewPage();
   }
@@ -89,6 +101,7 @@ Widget _buildOption(
         //   context,
         //   MaterialPageRoute(builder: (context) => AIGenerateScreen()),
         // );
+
       } else if (label == "Google Drive") {
         // Upload a file to Google Drive using googledrivehandler
         // try {
@@ -121,6 +134,7 @@ Widget _buildOption(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
+
               color: Colors.black54, // Border color
               width: 2.0, // Border width
             ),
@@ -128,6 +142,12 @@ Widget _buildOption(
           child: ClipOval(
             child: Image.asset(
               imagePath,
+
+              errorBuilder: (BuildContext context, Object exception,
+                  StackTrace? stackTrace) {
+                return Text('Failed to load image');
+              },
+
             ),
           ),
         ),
@@ -169,11 +189,16 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
         title: Text(
           "Details",
           style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87),
+
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+
         ),
         centerTitle: true,
         leading: Padding(
-          padding: const EdgeInsets.only(left: 20), // Set the same left padding
+          padding: const EdgeInsets.only(left: 20),
           child: Container(
             width: 50,
             height: 50,
@@ -205,15 +230,14 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
                   height: 396,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20.0),
-                    child: Image.asset(
-                      "image/warungWareg.png",
+                    // bukan ini
+                    child: Image.network(
+                      widget.imagePath,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
+                SizedBox(height: 20),
                 Row(
                   children: [
                     _categoryButton(
@@ -225,9 +249,7 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
                         });
                       },
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
+                    SizedBox(width: 10),
                     Text(
                       "|",
                       style: TextStyle(
@@ -235,9 +257,7 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
                           fontWeight: FontWeight.bold,
                           color: Colors.black54),
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
+                    SizedBox(width: 10),
                     _categoryButton(
                       "reviews",
                       selectedCategory == "reviews",
@@ -249,38 +269,21 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 25,
+                SizedBox(height: 25),
+                title(
+                  widget.businessName,
+                  widget.category,
+                  widget.address,
                 ),
-                title("Warung Wareg", "Makanan, Kuliner, Minuman",
-                    "Jalan Raya Pandanrejo, 65332 Malang"),
-                SizedBox(
-                  height: 25,
-                ),
-                // Container(
-                //   child: Column(
-                //     children: [
-                //       Container(
-                //         decoration: BoxDecoration(
-                //           color: Colors.white,
-                //           borderRadius: BorderRadius.circular(8),
-                //         ),
-                //         child: Column(
-                //           children: [Text('asda')],
-                //         ),
-                //       )
-                //     ],
-                //   ),
-                // ),
-                _getContent(),
+                SizedBox(height: 25),
+                _getContent(selectedCategory, widget.description),
               ],
             ),
           ),
         ),
       ),
       bottomNavigationBar: Container(
-        margin: EdgeInsets.fromLTRB(
-            24, 15, 24, 15), // Jarak dari samping kiri, kanan, dan bawah
+        margin: EdgeInsets.fromLTRB(24, 15, 24, 15),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -288,7 +291,7 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
               borderRadius: BorderRadius.circular(8),
             ),
             backgroundColor: Color(0xFF1EAAFD),
-            minimumSize: Size(200, 50), // Ukuran minimum tombol
+            minimumSize: Size(200, 50),
           ),
           onPressed: () {
             selectedCategory == "overview"

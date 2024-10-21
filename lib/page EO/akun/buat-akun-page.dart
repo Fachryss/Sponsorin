@@ -264,6 +264,7 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+
     final bool isKeyboardVisible =
         MediaQuery.of(context).viewInsets.bottom != 0;
     return Scaffold(
