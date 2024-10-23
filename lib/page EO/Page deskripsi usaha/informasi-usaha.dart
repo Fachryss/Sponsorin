@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:enhanced_url_launcher/enhanced_url_launcher.dart';
 import 'package:file_picker/file_picker.dart';
@@ -38,8 +39,7 @@ class InformasiUsaha extends StatefulWidget {
   State<InformasiUsaha> createState() => _InformasiUsahaState();
 }
 
-String? _fileName;
-final String myApiKey = "YOUR_API_KEY";
+final String myApiKey = "AIzaSyC0M9R-lb_0LS7XtiEoC9JveslZAusI5rQ";
 
 Widget _categoryButton(String text, bool isSelected, VoidCallback onPressed) {
   return GestureDetector(
@@ -64,124 +64,132 @@ Widget _getContent(String selectedCategory, String description) {
   return Container(); // Fallback for any other category
 }
 
-String selectedCategory = "overview";
-void _showAddTaskOptions(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return Container(
-        padding: EdgeInsets.all(16),
-        height: 150,
-        child: GridView.count(
-          crossAxisCount: 3, // Menampilkan dalam 3 kolom
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          children: [
-            _buildOption(context, 'image/AI-gen.png', "AI Generate"),
-            _buildOption(context, 'image/drive.png', "Google Drive"),
-            _buildOption(context, 'image/upload.png', "Upload"),
-          ],
-        ),
-      );
-    },
-  );
-}
-
-Widget _buildOption(
-  BuildContext context,
-  String imagePath,
-  String label,
-) {
-  return GestureDetector(
-    onTap: () async {
-      Navigator.pop(context);
-      if (label == "AI Generate") {
-        // Navigate to the AI Generate Screen
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => AIGenerateScreen()),
-        // );
-
-      } else if (label == "Google Drive") {
-        // Upload a file to Google Drive using googledrivehandler
-        // try {
-        //   File? myFile = await GoogleDriveHandler()
-        //       .getFileFromGoogleDrive(context: context);
-        //   if (myFile != null) {
-        //     // Do something with the file, for instance, open the file
-        //     await OpenFile.open(myFile.path);
-        //     print(myFile.path); // Print the file path for debugging
-        //   } else {
-        //     // Handle if the user didn't select a file or canceled the operation
-        //     ScaffoldMessenger.of(context).showSnackBar(
-        //       SnackBar(content: Text('No file selected')),
-        //     );
-        //   }
-        // } catch (error) {
-        //   // Handle any errors that occurred during the Google Drive operation
-        //   ScaffoldMessenger.of(context).showSnackBar(
-        //     SnackBar(content: Text('Error accessing Google Drive: $error')),
-        //   );
-        // }
-      } else if (label == "Upload") {}
-    },
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 65,
-          height: 65,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-
-              color: Colors.black54, // Border color
-              width: 2.0, // Border width
-            ),
-          ),
-          child: ClipOval(
-            child: Image.asset(
-              imagePath,
-
-              errorBuilder: (BuildContext context, Object exception,
-                  StackTrace? stackTrace) {
-                return Text('Failed to load image');
-              },
-
-            ),
-          ),
-        ),
-        SizedBox(height: 10),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
-      ],
-    ),
-  );
-}
-
 class _InformasiUsahaState extends State<InformasiUsaha> {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: [drive.DriveApi.driveFileScope],
   );
-  GoogleSignInAccount? _currentUser;
-  String _fileName = '';
 
-  @override
-  void initState() {
-    super.initState();
-    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
-      setState(() {
-        _currentUser = account;
-      });
+  String fileName = '';
+  File? file_proposal;
+
+  void _updateFile(File? file) {
+    setState(() {
+      file_proposal = file;
+      fileName = file != null ? file.path.split('/').last : '';
     });
-    _googleSignIn.signInSilently();
+  }
+
+  void _showError(String error) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
+    }
+  }
+
+  String selectedCategory = "overview";
+  void _showAddTaskOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(16),
+          height: 150,
+          child: GridView.count(
+            crossAxisCount: 3, // Menampilkan dalam 3 kolom
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            children: [
+              _buildOption(context, 'image/AI-gen.png', "AI Generate"),
+              _buildOption(context, 'image/drive.png', "Google Drive"),
+              _buildOption(context, 'image/upload.png', "Upload"),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildOption(
+    BuildContext context,
+    String imagePath,
+    String label,
+  ) {
+    return GestureDetector(
+      onTap: () async {
+        Navigator.pop(context);
+        if (label == "AI Generate") {
+          // Navigate to the AI Generate Screen
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => AIGenerateScreen()),
+          // );
+        } else if (label == "Google Drive") {
+          try {
+            File? myFile = await GoogleDriveHandler()
+                .getFileFromGoogleDrive(context: context);
+            if (myFile != null) {
+              _updateFile(myFile);
+              OpenFile.open(myFile.path);
+              print("Selected file from Google Drive: ${myFile.path}");
+            } else {
+              print("No file selected from Google Drive");
+            }
+          } catch (e) {
+            if (mounted) {
+              _showError(e.toString());
+            }
+          }
+        } else if (label == "Upload") {
+          FilePickerResult? result = await FilePicker.platform.pickFiles();
+          if (result != null) {
+            File file = File(result.files.single.path!);
+            _updateFile(file);
+            print("Uploaded file from device: ${file.path}");
+          } else {
+            print("No file uploaded");
+          }
+        }
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 65,
+            height: 65,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.black54, // Border color
+                width: 2.0, // Border width
+              ),
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                imagePath,
+                errorBuilder: (BuildContext context, Object exception,
+                    StackTrace? stackTrace) {
+                  return Text('Failed to load image');
+                },
+              ),
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    GoogleDriveHandler().setAPIKey(
+      apiKey: myApiKey,
+    );
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -189,12 +197,10 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
         title: Text(
           "Details",
           style: TextStyle(
-
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
           ),
-
         ),
         centerTitle: true,
         leading: Padding(
@@ -277,6 +283,7 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
                 ),
                 SizedBox(height: 25),
                 _getContent(selectedCategory, widget.description),
+                SizedBox(height: 25),
               ],
             ),
           ),
@@ -284,30 +291,59 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
       ),
       bottomNavigationBar: Container(
         margin: EdgeInsets.fromLTRB(24, 15, 24, 15),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (fileName.isNotEmpty)
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                // color: Colors.grey[200],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(fileName),
+                    IconButton(
+                      icon: Icon(Icons.cancel, color: Colors.red),
+                      onPressed: () {
+                        _updateFile(null);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            SizedBox(
+              height: 15,
             ),
-            backgroundColor: Color(0xFF1EAAFD),
-            minimumSize: Size(200, 50),
-          ),
-          onPressed: () {
-            selectedCategory == "overview"
-                ? _showAddTaskOptions(context)
-                : print("Beri review");
-          },
-          child: Text(
-            selectedCategory == "overview"
-                ? "Ajukan kerja sama"
-                : "Beri review",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.fromLTRB(24, 15, 24, 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                backgroundColor: Color(0xFF1EAAFD),
+                minimumSize: Size(800, 50),
+              ),
+              onPressed: () async {
+                selectedCategory == "overview"
+                    ? _showAddTaskOptions(context)
+                    : print("Beri review");
+              },
+              child: Text(
+                selectedCategory == "overview"
+                    ? "Ajukan kerja sama"
+                    : "Beri review",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

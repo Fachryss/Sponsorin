@@ -6,6 +6,7 @@ import 'package:sponsorin/page%20EO/add%20event/add-event.dart';
 import 'package:sponsorin/page%20EO/akun/login-page.dart';
 import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
 import 'package:sponsorin/page%20EO/profile/profile.dart';
+import 'package:sponsorin/page%20EO/testing.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:sponsorin/style/textstyle.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         textTheme: const TextTheme(),
       ),
-      home: Homepage(),
+      home: HomePage(),
     );
   }
 }
