@@ -211,15 +211,15 @@ class _SearchPageState extends State<SearchPage> {
                 SizedBox(
                   height: 25,
                 ),
-                Column(
-                  children: displayedBusinesses
-                      .map((business) => Padding(
-                            padding: const EdgeInsets.only(bottom: 15),
-                            child: BuildContainerPanjang(business["image"]!,
-                                business["title"]!, business["subtitle"]!),
-                          ))
-                      .toList(),
-                )
+                // Column(
+                //   children: displayedBusinesses
+                //       .map((business) => Padding(
+                //             padding: const EdgeInsets.only(bottom: 15),
+                //             child: BuildContainerPanjang(business["image"]!,
+                //                 business["title"]!, business["subtitle"]!),
+                //           ))
+                //       .toList(),
+                // )
               ],
             ),
           ),

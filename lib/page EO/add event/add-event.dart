@@ -102,15 +102,15 @@ class _AddEventState extends State<AddEvent> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Column(
-                    children: dataEventUserCopy
-                        .map((business) => Padding(
-                              padding: const EdgeInsets.only(bottom: 15),
-                              child: BuildContainerPanjang(business["image"]!,
-                                  business["title"]!, business["subtitle"]!),
-                            ))
-                        .toList(),
-                  ),
+                  // Column(
+                  //   children: dataEventUserCopy
+                  //       .map((business) => Padding(
+                  //             padding: const EdgeInsets.only(bottom: 15),
+                  //             child: BuildContainerPanjang(business["image"]!,
+                  //                 business["title"]!, business["subtitle"]!),
+                  //           ))
+                  //       .toList(),
+                  // ),
                 ],
               ),
             ),
