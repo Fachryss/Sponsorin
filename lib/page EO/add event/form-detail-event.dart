@@ -152,28 +152,19 @@ class _FormEventState extends State<FormEvent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(244, 244, 244, 100),
         title: Text(
           "Add event",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: CustomTextStyles.appBar,
         ),
+        elevation: 0,
         centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 20), // Set the same left padding
-          child: Container(
-            width: 50,
-            height: 50,
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios,
-                size: 20,
-                color: Colors.black54,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
+        backgroundColor: Color.fromRGBO(255, 244, 244, 244),
+        leading: IconButton(
+          iconSize: 20,
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ),
       body: SingleChildScrollView(
