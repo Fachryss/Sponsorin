@@ -9,6 +9,8 @@ import 'package:open_file/open_file.dart';
 import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/deskripsi-usaha.dart';
 import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/review.dart';
 import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/title.dart';
+import 'package:sponsorin/page%20EO/ai/AIGenerate.dart';
+
 import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
 import 'package:sponsorin/style/textstyle.dart';
 import 'package:flutter/material.dart';
@@ -119,11 +121,18 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
       onTap: () async {
         Navigator.pop(context);
         if (label == "AI Generate") {
-          // Navigate to the AI Generate Screen
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => AIGenerateScreen()),
-          // );
+          // Navigate to the AI Generate Screen and get the result
+          File? generatedFile = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AIGenerate(
+                onProposalGenerated: (File) {},
+              ),
+            ),
+          );
+          if (generatedFile != null) {
+            _updateFile(generatedFile);
+          }
         } else if (label == "Google Drive") {
           try {
             File? myFile = await GoogleDriveHandler()
@@ -305,7 +314,14 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(fileName),
+                    Flexible(
+                      child: Text(
+                        fileName.length > 200
+                            ? '${fileName.substring(0, 17)}...'
+                            : fileName,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                     IconButton(
                       icon: Icon(Icons.cancel, color: Colors.red),
                       onPressed: () {
@@ -328,14 +344,18 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
                 minimumSize: Size(800, 50),
               ),
               onPressed: () async {
-                selectedCategory == "overview"
-                    ? _showAddTaskOptions(context)
-                    : print("Beri review");
+                file_proposal != null
+                    ? print("Kirim")
+                    : selectedCategory == "overview"
+                        ? _showAddTaskOptions(context)
+                        : print("Beri review");
               },
               child: Text(
-                selectedCategory == "overview"
-                    ? "Ajukan kerja sama"
-                    : "Beri review",
+                file_proposal != null
+                    ? "Kirim"
+                    : selectedCategory == "overview"
+                        ? "Ajukan kerja sama"
+                        : "Beri review",
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
