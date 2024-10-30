@@ -18,10 +18,12 @@ class _FormEventState extends State<FormEvent> {
   final TextEditingController _tagController = TextEditingController();
   final List<String> _tags = [];
   final List<String> _suggestions = [
-    "Flutter",
-    "Dart",
-    "Programming",
-    "Mobile"
+    "Musik",
+    "Olahraga",
+    "Seni & Budaya",
+    "Bisnis & Budaya",
+    "Bisnis & Teknologi",
+    "Pendidikan"
   ];
 
   final TextEditingController _fileControllerdokum = TextEditingController();
@@ -297,11 +299,6 @@ class _FormEventState extends State<FormEvent> {
                                   borderRadius: BorderRadius.circular(18),
                                   side: BorderSide(color: Colors.white),
                                 ),
-                                onDeleted: () {
-                                  setState(() {
-                                    _tags.remove(tag);
-                                  });
-                                },
                               ),
                             ))
                         .toList(),

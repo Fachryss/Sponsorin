@@ -14,6 +14,8 @@ import 'dart:typed_data';
 import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 
+import 'package:sponsorin/page%20Usaha/akun/login-page.dart';
+
 class BuatAkunEO extends StatefulWidget {
   const BuatAkunEO({Key? key}) : super(key: key);
 
@@ -159,7 +161,9 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(
+            builder: (context) => HomePage(role: 'EO'),
+          ),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -332,25 +336,28 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
                             fontWeight: FontWeight.w300,
                           ),
                         ),
-                        // SizedBox(height: screenSize.height * 0.05),
-                        // RepaintBoundary(
-                        //   key: _avatarKey,
-                        //   child: RandomAvatar(_randomAvatarSeed, height: screenSize.width * 0.25, width: screenSize.width * 0.25),
-                        // ),
-                        SizedBox(height: screenSize.height * 0.05),
-                        _buildTextField("Nama", _nameController),
-                        _buildTextField("Email", _emailController),
-                        _buildTextField("Nomor Telepon", _phoneController),
-                        _buildTextField("Alamat Kantor", _addressController),
-                        _buildUploadField(),
-                        SizedBox(
-                          height: 22,
+                        Container(
+                          height: 470,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                SizedBox(height: screenSize.height * 0.05),
+                                _buildTextField("Nama", _nameController),
+                                _buildTextField("Email", _emailController),
+                                _buildTextField(
+                                    "Nomor Telepon", _phoneController),
+                                _buildTextField(
+                                    "Alamat Kantor", _addressController),
+                                _buildUploadField(),
+                                SizedBox(
+                                  height: 22,
+                                ),
+                                _buildTextField("Password", _passwordController,
+                                    isPassword: true),
+                              ],
+                            ),
+                          ),
                         ),
-                        _buildTextField("Password", _passwordController,
-                            isPassword: true),
-                        SizedBox(
-                          height: 200,
-                        )
                       ],
                     ),
                   ),
@@ -393,7 +400,7 @@ class _BuatAkunEOState extends State<BuatAkunEO> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => loginPageEO()),
+                                builder: (context) => loginPageUsaha()),
                           );
                         },
                         child: Row(

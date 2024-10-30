@@ -2,17 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sponsorin/page%20EO/page%20home/custom-container-panjang.dart';
 import 'package:sponsorin/page%20EO/page%20home/custom-container.dart';
+import 'package:sponsorin/page%20Usaha/page%20home/custom-container-panjang-event.dart';
 import 'package:sponsorin/style/textstyle.dart';
 import 'dart:math';
 
-class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+class HomepageUsaha extends StatefulWidget {
+  const HomepageUsaha({super.key});
 
   @override
-  State<Homepage> createState() => _HomepageState();
+  State<HomepageUsaha> createState() => _HomepageUsahaState();
 }
 
-class _HomepageState extends State<Homepage> {
+class _HomepageUsahaState extends State<HomepageUsaha> {
   String selectedCategory = "Retail";
   bool isLoading = true;
   String? error;
@@ -174,34 +175,51 @@ class _HomepageState extends State<Homepage> {
                 ),
                 SizedBox(height: 5),
                 const CustomText(
-                    text: 'Ingin membuat event apa hari ini',
+                    text: 'Ingin sponsorin event apa hari ini?',
                     style: CustomTextStyles.subtitle),
                 const SizedBox(height: 25),
+                CustomText(
+                    text: "On going events", style: CustomTextStyles.title),
+                SizedBox(height: 25),
+                BuildContainerPanjangEvent(
+                  context: context,
+                  imagePath: "image/disnat.png",
+                  title: 'Dies Natalis',
+                  date: '10 September 2024',
+                  time: '07.00 - 15.00 PM ',
+                ),
+                SizedBox(height: 25),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _categoryButton("Retail", selectedCategory == "Retail",
-                          Icons.card_travel),
-                      SizedBox(width: 15),
-                      _categoryButton("Makanan", selectedCategory == "Makanan",
-                          Icons.fastfood_outlined),
-                      SizedBox(width: 15),
-                      _categoryButton("Jasa", selectedCategory == "Jasa",
-                          Icons.handyman_outlined),
+                      _categoryButton("Musik", selectedCategory == "Musik",
+                          Icons.music_note_outlined),
                       SizedBox(width: 15),
                       _categoryButton(
-                          "Kesehatan",
-                          selectedCategory == "Kesehatan",
-                          Icons.local_hospital_outlined),
+                          "Olahraga",
+                          selectedCategory == "Olahraga",
+                          Icons.sports_basketball_outlined),
+                      SizedBox(width: 15),
+                      _categoryButton(
+                          "Seni & Budaya",
+                          selectedCategory == "Seni & Budaya",
+                          Icons.sports_gymnastics_outlined),
+                      SizedBox(width: 15),
+                      _categoryButton(
+                          "Bisnis & Budaya",
+                          selectedCategory == "Bisnis & Budaya",
+                          Icons.business_outlined),
+                      SizedBox(width: 15),
+                      _categoryButton(
+                          "Bisnis & Teknologi",
+                          selectedCategory == "Bisnis & Teknologi",
+                          Icons.computer_outlined),
                       SizedBox(width: 15),
                       _categoryButton(
                           "Pendidikan",
                           selectedCategory == "Pendidikan",
                           Icons.school_outlined),
-                      SizedBox(width: 15),
-                      _categoryButton("Hiburan", selectedCategory == "Hiburan",
-                          Icons.park_outlined),
                     ],
                   ),
                 ),

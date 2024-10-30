@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sponsorin/main.dart';
 import 'dart:async';
 
 import 'package:sponsorin/page%20EO/akun/buat-akun-page.dart';
+import 'package:sponsorin/page%20Usaha/akun/buat-akun-page.dart';
 
 class pemilihanPosisi extends StatefulWidget {
   const pemilihanPosisi({super.key});
@@ -134,7 +136,14 @@ class _pemilihanPosisiState extends State<pemilihanPosisi> {
                                 ),
                                 backgroundColor:
                                     Color.fromRGBO(78, 75, 76, 65)),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BuatAkunUsaha(),
+                                ),
+                              );
+                            },
                             child: Text(
                               "Sponsor",
                               style: TextStyle(
