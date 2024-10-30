@@ -3,10 +3,14 @@ import 'package:sponsorin/auth/auth.dart';
 import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/informasi-usaha.dart';
 import 'package:sponsorin/page%20EO/Search/search-page.dart';
 import 'package:sponsorin/page%20EO/add%20event/add-event.dart';
+import 'package:sponsorin/page%20EO/add%20event/form-detail-event.dart';
+import 'package:sponsorin/page%20EO/akun/buat-akun-page.dart';
 import 'package:sponsorin/page%20EO/akun/login-page.dart';
 import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
 import 'package:sponsorin/page%20EO/profile/profile.dart';
-import 'package:sponsorin/page%20EO/testing.dart';
+import 'package:sponsorin/page%20Usaha/akun/buat-akun-page.dart';
+import 'package:sponsorin/page%20Usaha/page%20deskripsi%20event/informasi-event.dart';
+import 'package:sponsorin/page%20Usaha/page%20home/homepage.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:sponsorin/style/textstyle.dart';
@@ -39,6 +43,9 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
+  final String role;
+  HomePage({required this.role});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -46,12 +53,36 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
+  final List<Widget> _EOPages = [
     Homepage(),
     SearchPage(),
     AddEvent(), // Add your other pages here
     Profile(), // Example: Placeholder, you can add actual pages
   ];
+
+  final List<Widget> _UsahaPages = [HomepageUsaha()];
+  List<BottomNavigationBarItem> _buildNavBarItems() {
+    return widget.role == 'EO'
+        ? [
+            BottomNavigationBarItem(
+                icon: _buildNavItem(0, Icons.home_outlined), label: ''),
+            BottomNavigationBarItem(
+                icon: _buildNavItem(1, Icons.search_rounded), label: ''),
+            BottomNavigationBarItem(
+                icon: _buildNavItem(2, Icons.add_rounded), label: ''),
+            BottomNavigationBarItem(
+                icon: _buildNavItem(3, Icons.person_outline_rounded),
+                label: ''),
+          ]
+        : [
+            BottomNavigationBarItem(
+                icon: _buildNavItem(0, Icons.business), label: ''),
+            BottomNavigationBarItem(
+                icon: _buildNavItem(1, Icons.search), label: ''),
+            BottomNavigationBarItem(
+                icon: _buildNavItem(2, Icons.person), label: ''),
+          ];
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -61,31 +92,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // The body updates according to the selected index
-      body: _pages[_selectedIndex],
+    final pages = widget.role == 'EO' ? _EOPages : _UsahaPages;
 
+    return Scaffold(
+      body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Color.fromRGBO(244, 244, 244, 100),
         type: BottomNavigationBarType.fixed, // Disable animation
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: _buildNavItem(0, Icons.home_outlined),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: _buildNavItem(1, Icons.search),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: _buildNavItem(2, Icons.add),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: _buildNavItem(3, Icons.person_outline),
-            label: '',
-          ),
-        ],
+        items: _buildNavBarItems(),
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),

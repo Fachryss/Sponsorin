@@ -55,7 +55,7 @@ Widget title(String title, String categories, String location) {
                   fontWeight: FontWeight.w500),
             )
           ],
-        )
+        ),
       ],
     ),
   );

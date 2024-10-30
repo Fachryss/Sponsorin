@@ -92,6 +92,9 @@ flutter:
     - image/google.png
     - image/mail-check.png
     - image/event_available.png
+    - image/disnat.png
+    - image/google.png
+    - image/googleShow.jpg
 
   
   # An image asset can refer to one or more resolution-specific "variants", see
