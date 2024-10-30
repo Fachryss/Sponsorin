@@ -8,15 +8,16 @@ import 'package:sponsorin/page%20EO/akun/components.dart';
 import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:sponsorin/page%20Usaha/akun/buat-akun-page.dart';
 
-class loginPageEO extends StatefulWidget {
-  const loginPageEO({super.key});
+class loginPageUsaha extends StatefulWidget {
+  const loginPageUsaha({super.key});
 
   @override
-  State<loginPageEO> createState() => _loginPageEOState();
+  State<loginPageUsaha> createState() => _loginPageUsahaState();
 }
 
-class _loginPageEOState extends State<loginPageEO> {
+class _loginPageUsahaState extends State<loginPageUsaha> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -59,7 +60,7 @@ class _loginPageEOState extends State<loginPageEO> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(role: 'EO'),
+            builder: (context) => HomePage(role: 'Usaha'),
           ),
         );
       }
@@ -235,7 +236,7 @@ class _loginPageEOState extends State<loginPageEO> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => BuatAkunEO()),
+                                builder: (context) => BuatAkunUsaha()),
                           );
                         },
                         child: Row(

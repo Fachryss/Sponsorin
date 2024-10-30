@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-Widget buildDescriptionCard(String description) {
+Widget buildDescriptionCard(String description, String title) {
   return Container(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Deskripsi Usaha",
+          title,
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         SizedBox(

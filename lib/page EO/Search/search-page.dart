@@ -215,11 +215,20 @@ class _SearchPageState extends State<SearchPage> {
                 //   children: displayedBusinesses
                 //       .map((business) => Padding(
                 //             padding: const EdgeInsets.only(bottom: 15),
-                //             child: BuildContainerPanjang(business["image"]!,
-                //                 business["title"]!, business["subtitle"]!),
+                //             child: BuildContainerPanjang(
+                //               context:
+                //                   context, // Pass the context for navigation
+                //               imagePath: business["image"]!,
+                //               title: business["title"]!,
+                //               sub: business["subtitle"]!,
+                //               category: business["category"] ??
+                //                   'Unknown', // Use ?? for default value
+                //               address: business["address"]!,
+                //               description: business["description"]!,
+                //             ),
                 //           ))
                 //       .toList(),
-                // )
+                // ),
               ],
             ),
           ),

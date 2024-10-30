@@ -8,7 +8,7 @@ import 'package:http/src/client.dart';
 import 'package:open_file/open_file.dart';
 import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/deskripsi-usaha.dart';
 import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/review.dart';
-import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/title.dart';
+import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/titleusaha.dart';
 import 'package:sponsorin/page%20EO/ai/AIGenerate.dart';
 
 import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
@@ -57,9 +57,9 @@ Widget _categoryButton(String text, bool isSelected, VoidCallback onPressed) {
   );
 }
 
-Widget _getContent(String selectedCategory, String description) {
+Widget _getContent(String selectedCategory, String description, String title) {
   if (selectedCategory == "overview") {
-    return buildDescriptionCard(description);
+    return buildDescriptionCard(description, title);
   } else if (selectedCategory == "reviews") {
     return buildReviewPage();
   }
@@ -291,7 +291,8 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
                   widget.address,
                 ),
                 SizedBox(height: 25),
-                _getContent(selectedCategory, widget.description),
+                _getContent(
+                    selectedCategory, widget.description, 'Deskripsi Usaha'),
                 SizedBox(height: 25),
               ],
             ),
