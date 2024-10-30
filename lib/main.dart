@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         textTheme: const TextTheme(),
       ),
-      home: HomePage(),
+      home: auth(),
     );
   }
 }
