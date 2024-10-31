@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:file_picker/file_picker.dart';
@@ -45,70 +44,41 @@ class _loginPageEOState extends State<loginPageEO> {
   }
 
   Future<void> _signIn() async {
-  setState(() {
-    _isLoading = true;
-  });
+    setState(() {
+      _isLoading = true;
+    });
 
-  try {
-    final UserCredential userCredential =
-        await _auth.signInWithEmailAndPassword(
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
+    try {
+      final UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
 
-    final uid = userCredential.user?.uid;
-
-    if (uid != null) {
-      // Reference to Firestore
-      final firestore = FirebaseFirestore.instance;
-
-      // Check if user exists in EO collection
-      final eoDoc = await firestore.collection('user').doc(uid).get();
-      if (eoDoc.exists) {
-        print("User EO Login");
-        // If user exists in EO collection
+      if (userCredential.user != null) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => HomePage(role: 'EO'),
           ),
         );
-      } else {
-        // If user doesn't exist in EO, check in Companies collection
-        final companyDoc = await firestore.collection('Companies').doc(uid).get();
-        if (companyDoc.exists) {
-          print("User Companies Login");
-          // If user exists in Companies collection
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePage(role: 'EO'),
-            ),
-          );
-        } else {
-          // If user is not found in both collections
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Akun tidak ditemukan di sistem.')),
-          );
-        }
       }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'An error occurred. Please try again.';
+      if (e.code == 'user-not-found') {
+        errorMessage = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        errorMessage = 'Wrong password provided.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
-  } on FirebaseAuthException catch (e) {
-    String errorMessage = 'An error occurred. Please try again.';
-    if (e.code == 'user-not-found') {
-      errorMessage = 'No user found for that email.';
-    } else if (e.code == 'wrong-password') {
-      errorMessage = 'Wrong password provided.';
-    }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(errorMessage)),
-    );
-  } finally {
-    setState(() {
-      _isLoading = false;
-    });
   }
-}
 
   String? _fileName;
   Future<void> pickFile() async {

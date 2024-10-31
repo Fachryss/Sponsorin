@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         textTheme: const TextTheme(),
       ),
-      home: ProfileUsaha(),
+      home: auth(),
     );
   }
 }
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List<Widget> _EOPages = [
-    Homepage(),
+    HomepageEO(),
     SearchPage(),
     AddEvent(), // Add your other pages here
     ProfileEO(), // Example: Placeholder, you can add actual pages
@@ -67,6 +67,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _UsahaPages = [
     HomepageUsaha(),
     SearchPageUsaha(),
+    TanggalEvent(),
     ProfileUsaha()
   ];
   List<BottomNavigationBarItem> _buildNavBarItems() {
@@ -116,7 +117,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final pages = widget.role == 'EO' ? _EOPages : _UsahaPages;
-
     return Scaffold(
       body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(

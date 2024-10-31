@@ -122,6 +122,15 @@ class _loginPageUsahaState extends State<loginPageUsaha> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        title: Text(
+          "Sign In Usaha",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
         leading: Padding(
           padding: const EdgeInsets.only(left: 24.0),
           child: IconButton(

@@ -5,14 +5,14 @@ import 'package:sponsorin/page%20EO/page%20home/custom-container.dart';
 import 'package:sponsorin/style/textstyle.dart';
 import 'dart:math';
 
-class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+class HomepageEO extends StatefulWidget {
+  const HomepageEO({super.key});
 
   @override
-  State<Homepage> createState() => _HomepageState();
+  State<HomepageEO> createState() => _HomepageEOState();
 }
 
-class _HomepageState extends State<Homepage> {
+class _HomepageEOState extends State<HomepageEO> {
   String selectedCategory = "Retail";
   bool isLoading = true;
   String? error;
@@ -22,54 +22,69 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
-    fetchDataFromFirestore(); // Fetch data saat inisialisasi
+    fetchDataFromFirestore();
   }
 
-  // Fungsi untuk fetch data dari Firestore
+  // Helper function to handle category conversion
+  List<String> getCategoriesFromField(dynamic categoryField) {
+    if (categoryField is String) {
+      return [categoryField];
+    } else if (categoryField is List) {
+      return categoryField.map((e) => e.toString()).toList();
+    }
+    return ['Unknown'];
+  }
+
+  // Updated fetch function to handle both String and List categories
   Future<void> fetchDataFromFirestore() async {
     try {
       QuerySnapshot querySnapshot =
           await FirebaseFirestore.instance.collection('Companies').get();
-      print(
-          "Data fetched from Firestore: ${querySnapshot.docs.length} documents"); // Tambahkan log ini
+      print("Data fetched from Firestore: ${querySnapshot.docs.length} documents");
 
-      querySnapshot.docs.forEach((doc) {
+      for (var doc in querySnapshot.docs) {
         var companyData = doc.data() as Map<String, dynamic>;
-        print("Company data: $companyData"); // Tambahkan log ini
+        print("Company data: $companyData");
 
-        String category = companyData['category'];
+        // Get all categories for this company
+        List<String> categories = getCategoriesFromField(companyData['category']);
+        
+        // Company details
         String image = companyData['image'] ?? "";
         String name = companyData['name'] ?? "";
         String subtitle = companyData['subtitle'] ?? "";
         String description = companyData['description'] ?? "";
         String address = companyData['location'] ?? "";
 
-        // print("Category Value: $categoryValue")
+        // Create business entry
+        Map<String, String> businessEntry = {
+          "image": image,
+          "title": name,
+          "subtitle": subtitle,
+          "description": description,
+          "address": address,
+          "category": categories.join(', '), // Join multiple categories for display
+        };
 
-        if (businessData.containsKey(category)) {
-          businessData[category]!.add({
-            "image": image,
-            "title": name,
-            "subtitle": subtitle,
-            "description": description,
-            "address": address,
-          });
-        } else {
-          businessData[category] = [
-            {
-              "image": image,
-              "title": name,
-              "subtitle": subtitle,
-              "description": description,
-              "address": address,
-            }
-          ];
+        // Add the business entry to each of its categories
+        for (String category in categories) {
+          if (businessData.containsKey(category)) {
+            businessData[category]!.add(businessEntry);
+          } else {
+            businessData[category] = [businessEntry];
+          }
         }
-      });
+      }
 
-      setState(() {});
+      setState(() {
+        isLoading = false;
+      });
     } catch (e) {
       print("Error fetching data from Firestore: $e");
+      setState(() {
+        error = e.toString();
+        isLoading = false;
+      });
     }
   }
 
@@ -77,7 +92,7 @@ class _HomepageState extends State<Homepage> {
     return ElevatedButton(
       onPressed: () {
         setState(() {
-          selectedCategory = text; // Update kategori yang dipilih
+          selectedCategory = text;
         });
       },
       style: ElevatedButton.styleFrom(
@@ -93,14 +108,15 @@ class _HomepageState extends State<Homepage> {
         children: [
           Icon(icon, size: 20),
           SizedBox(width: 5),
-          Text(text,
-              style: TextStyle(
-                color: isSelected
-                    ? Colors.white
-                    : Color.fromARGB(255, 109, 109, 109),
-                fontWeight: FontWeight.bold,
-              ) // Optional: Customize font style
-              ),
+          Text(
+            text,
+            style: TextStyle(
+              color: isSelected
+                  ? Colors.white
+                  : Color.fromARGB(255, 109, 109, 109),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );
@@ -111,6 +127,9 @@ class _HomepageState extends State<Homepage> {
     businessData.forEach((key, value) {
       allBusinesses.addAll(value);
     });
+    
+    // Remove duplicates based on title
+    allBusinesses = allBusinesses.toSet().toList();
     allBusinesses.shuffle(Random());
     return allBusinesses.take(count).toList();
   }
