@@ -11,9 +11,12 @@ import 'package:sponsorin/page%20EO/profile/profile.dart';
 import 'package:sponsorin/page%20Usaha/akun/buat-akun-page.dart';
 import 'package:sponsorin/page%20Usaha/page%20deskripsi%20event/informasi-event.dart';
 import 'package:sponsorin/page%20Usaha/page%20home/homepage.dart';
+import 'package:sponsorin/page%20Usaha/profile/profile.dart';
+import 'package:sponsorin/page%20Usaha/search/search-page.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:sponsorin/style/textstyle.dart';
+import 'package:sponsorin/page%20Usaha/tanggal%20event/tanggal-event.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +33,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
       debugShowCheckedModeBanner: false,
       title: 'Business App',
       theme: ThemeData(
@@ -37,7 +41,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         textTheme: const TextTheme(),
       ),
-      home: auth(),
+      home: ProfileUsaha(),
     );
   }
 }
@@ -57,10 +61,14 @@ class _HomePageState extends State<HomePage> {
     Homepage(),
     SearchPage(),
     AddEvent(), // Add your other pages here
-    Profile(), // Example: Placeholder, you can add actual pages
+    ProfileEO(), // Example: Placeholder, you can add actual pages
   ];
 
-  final List<Widget> _UsahaPages = [HomepageUsaha(), AddEvent(), Profile()];
+  final List<Widget> _UsahaPages = [
+    HomepageUsaha(),
+    SearchPageUsaha(),
+    ProfileUsaha()
+  ];
   List<BottomNavigationBarItem> _buildNavBarItems() {
     // return [
     //   BottomNavigationBarItem(
@@ -88,11 +96,14 @@ class _HomePageState extends State<HomePage> {
           ]
         : [
             BottomNavigationBarItem(
-                icon: _buildNavItem(0, Icons.business), label: ''),
+                icon: _buildNavItem(0, Icons.home_outlined), label: ''),
             BottomNavigationBarItem(
-                icon: _buildNavItem(1, Icons.search), label: ''),
+                icon: _buildNavItem(1, Icons.search_rounded), label: ''),
             BottomNavigationBarItem(
-                icon: _buildNavItem(2, Icons.person), label: ''),
+                icon: _buildNavItem(2, Icons.date_range_rounded), label: ''),
+            BottomNavigationBarItem(
+                icon: _buildNavItem(3, Icons.person_outline_rounded),
+                label: ''),
           ];
   }
 

@@ -232,6 +232,7 @@ class _InformasiUsahaState extends State<InformasiUsaha> {
       ),
       body: SingleChildScrollView(
         child: Container(
+          color: const Color.fromRGBO(244, 244, 244, 100),
           child: Padding(
             padding: EdgeInsets.fromLTRB(24, 20, 24, 24),
             child: Column(

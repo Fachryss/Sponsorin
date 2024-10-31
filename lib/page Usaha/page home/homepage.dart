@@ -14,7 +14,7 @@ class HomepageUsaha extends StatefulWidget {
 }
 
 class _HomepageUsahaState extends State<HomepageUsaha> {
-  String selectedCategory = "Retail";
+  String selectedCategory = "Musik";
   bool isLoading = true;
   String? error;
 
