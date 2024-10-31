@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sponsorin/main.dart';
+import 'package:sponsorin/page%20EO/ai/AIGenerate.dart';
+import 'package:sponsorin/page%20EO/profile/profile.dart';
 
 class ProsesProposal extends StatefulWidget {
   const ProsesProposal({super.key});
@@ -8,6 +11,20 @@ class ProsesProposal extends StatefulWidget {
 }
 
 class _ProsesProposalState extends State<ProsesProposal> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(seconds: 5), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Profile()),
+        );
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sponsorin/main.dart';
 import 'package:sponsorin/page%20EO/page%20proses/proses-proposal.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -39,6 +40,9 @@ class _FormEventState extends State<FormEvent> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _tagController = TextEditingController();
+  final TextEditingController _fileControllerLogo = TextEditingController();
+
+  final List<String> _fileNamesLogo = [];
 
   // Controllers for file and list management
   final TextEditingController _fileControllerdokum = TextEditingController();
@@ -66,43 +70,69 @@ class _FormEventState extends State<FormEvent> {
     "Conference"
   ];
 
-  Future<String> _uploadFileToStorage(PlatformFile file, String fileType) async {
-  final String uniqueFileName = '${const Uuid().v4()}_${file.name}';
-  final Reference storageRef = FirebaseStorage.instance
-      .ref()
-      .child(fileType)
-      .child(uniqueFileName);
+  Future<String> _uploadFileToStorage(
+      PlatformFile file, String fileType) async {
+    final String uniqueFileName = '${const Uuid().v4()}_${file.name}';
+    final Reference storageRef =
+        FirebaseStorage.instance.ref().child(fileType).child(uniqueFileName);
 
-  // Upload file to Firebase Storage
-  await storageRef.putFile(File(file.path!));
+    // Upload file to Firebase Storage
+    await storageRef.putFile(File(file.path!));
 
-  // Get file URL
-  final String fileUrl = await storageRef.getDownloadURL();
-  return fileUrl;
-}
+    // Get file URL
+    final String fileUrl = await storageRef.getDownloadURL();
+    return fileUrl;
+  }
 
   // File picking methods
   void _pickFileDokum() async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles();
-  if (result != null) {
-    final fileUrl = await _uploadFileToStorage(result.files.single, 'documentation');
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      final fileUrl =
+          await _uploadFileToStorage(result.files.single, 'documentation');
+      setState(() {
+        _fileNamesDocum.add(fileUrl); // Simpan URL ke Firestore nanti
+        _fileControllerdokum.clear();
+      });
+    }
+  }
+
+  void _pickFileLogo() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      final fileUrl = await _uploadFileToStorage(result.files.single, 'logo');
+      setState(() {
+        _fileNamesLogo.add(fileUrl); // Simpan URL ke Firestore nanti
+        _fileControllerLogo.clear();
+      });
+    }
+  }
+
+  void _addFileNameLogo() {
+    if (_fileControllerLogo.text.isNotEmpty) {
+      setState(() {
+        _fileNamesLogo.add(_fileControllerLogo.text);
+        _fileControllerLogo.clear();
+      });
+    }
+  }
+
+  void _removeFileNameLogo(String fileName) {
     setState(() {
-      _fileNamesDocum.add(fileUrl);  // Simpan URL ke Firestore nanti
-      _fileControllerdokum.clear();
+      _fileNamesLogo.remove(fileName);
     });
   }
-}
 
-void _pickFileProposal() async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles();
-  if (result != null) {
-    final fileUrl = await _uploadFileToStorage(result.files.single, 'proposal');
-    setState(() {
-      _fileControllerProposal.text = fileUrl;  // Simpan URL ke Firestore nanti
-    });
+  void _pickFileProposal() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      final fileUrl =
+          await _uploadFileToStorage(result.files.single, 'proposal');
+      setState(() {
+        _fileControllerProposal.text = fileUrl; // Simpan URL ke Firestore nanti
+      });
+    }
   }
-}
-
 
   // List management methods
   void _addFileNameDocum() {
@@ -221,14 +251,21 @@ void _pickFileProposal() async {
 
       await _firestore.collection('Event').doc(eventId).set(eventData);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Event berhasil ditambahkan!')),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(content: Text('Event berhasil ditambahkan!')),
+      // );
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const ProsesProposal()),
       );
+
+      // Future.delayed(const Duration(seconds: 5), () {
+      //   Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => HomePage(role: 'EO',)),
+      //   );
+      // });
     } catch (e) {
       print('Error submitting event: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -239,36 +276,36 @@ void _pickFileProposal() async {
 
   // Build UI components
   Widget buildTextAdderTextField({
-  required TextEditingController controller,
-  required VoidCallback onAddText,
-  required String Title,
-}) {
-  return TextField(
-    controller: controller,
-    decoration: InputDecoration(
-      hintText: Title,
-      suffixIcon: IconButton(
-        icon: Icon(
-          Icons.add_circle,
-          color: Color(0xFF1EAAFD),
+    required TextEditingController controller,
+    required VoidCallback onAddText,
+    required String Title,
+  }) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: Title,
+        suffixIcon: IconButton(
+          icon: Icon(
+            Icons.add_circle,
+            color: Color(0xFF1EAAFD),
+          ),
+          onPressed: onAddText,
         ),
-        onPressed: onAddText,
+        hintStyle: TextStyle(
+          color: Colors.black45,
+          fontSize: 15,
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+          borderSide: BorderSide(color: Color.fromRGBO(89, 89, 89, 1)),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+          borderSide: BorderSide(color: Colors.black87),
+        ),
       ),
-      hintStyle: TextStyle(
-        color: Colors.black45,
-        fontSize: 15,
-      ),
-      enabledBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(6)),
-        borderSide: BorderSide(color: Color.fromRGBO(89, 89, 89, 1)),
-      ),
-      focusedBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(6)),
-        borderSide: BorderSide(color: Colors.black87),
-      ),
-    ),
-  );
-}
+    );
+  }
 
   Widget buildTextList({
     required List<String> texts,
@@ -488,6 +525,27 @@ void _pickFileProposal() async {
                     onPressed: _pickFileProposal,
                   ),
                 ),
+              ),
+              TextFormField(
+                controller: _fileControllerLogo,
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: 'Logo',
+                  border: const OutlineInputBorder(),
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.upload_file),
+                        onPressed: _pickFileLogo,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              buildTextList(
+                texts: _fileNamesLogo,
+                onRemove: _removeFileNameLogo,
               ),
             ],
           ),
