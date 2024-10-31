@@ -4,7 +4,7 @@ class CustomTextArea extends StatelessWidget {
   final String hintText;
 
   const CustomTextArea({
-    required this.hintText,
+    required this.hintText, required TextEditingController controller,
   });
 
   @override
