@@ -11,6 +11,8 @@ import 'package:sponsorin/page%20EO/profile/profile.dart';
 import 'package:sponsorin/page%20Usaha/akun/buat-akun-page.dart';
 import 'package:sponsorin/page%20Usaha/page%20deskripsi%20event/informasi-event.dart';
 import 'package:sponsorin/page%20Usaha/page%20home/homepage.dart';
+import 'package:sponsorin/page%20Usaha/profile/profile.dart';
+import 'package:sponsorin/page%20Usaha/search/search-page.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:sponsorin/style/textstyle.dart';
@@ -37,7 +39,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         textTheme: const TextTheme(),
       ),
-      home: InfromasiEvent(),
+      home: ProfileUsaha(),
     );
   }
 }
@@ -57,10 +59,14 @@ class _HomePageState extends State<HomePage> {
     Homepage(),
     SearchPage(),
     AddEvent(), // Add your other pages here
-    Profile(), // Example: Placeholder, you can add actual pages
+    ProfileEO(), // Example: Placeholder, you can add actual pages
   ];
 
-  final List<Widget> _UsahaPages = [HomepageUsaha()];
+  final List<Widget> _UsahaPages = [
+    HomepageUsaha(),
+    SearchPageUsaha(),
+    ProfileUsaha()
+  ];
   List<BottomNavigationBarItem> _buildNavBarItems() {
     return widget.role == 'EO'
         ? [
@@ -76,11 +82,14 @@ class _HomePageState extends State<HomePage> {
           ]
         : [
             BottomNavigationBarItem(
-                icon: _buildNavItem(0, Icons.business), label: ''),
+                icon: _buildNavItem(0, Icons.home_outlined), label: ''),
             BottomNavigationBarItem(
-                icon: _buildNavItem(1, Icons.search), label: ''),
+                icon: _buildNavItem(1, Icons.search_rounded), label: ''),
             BottomNavigationBarItem(
-                icon: _buildNavItem(2, Icons.person), label: ''),
+                icon: _buildNavItem(2, Icons.date_range_rounded), label: ''),
+            BottomNavigationBarItem(
+                icon: _buildNavItem(3, Icons.person_outline_rounded),
+                label: ''),
           ];
   }
 

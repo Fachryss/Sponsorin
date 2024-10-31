@@ -12,6 +12,7 @@ import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/titleusaha.dart';
 import 'package:sponsorin/page%20EO/ai/AIGenerate.dart';
 
 import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
+import 'package:sponsorin/page%20EO/page%20proses/proses-kerja-sama.dart';
 import 'package:sponsorin/page%20Usaha/page%20deskripsi%20event/deskripsi-event.dart';
 import 'package:sponsorin/page%20Usaha/page%20deskripsi%20event/proposal-page.dart';
 import 'package:sponsorin/page%20Usaha/page%20deskripsi%20event/titleEvent.dart';
@@ -112,6 +113,70 @@ class _InfromasiEventState extends State<InfromasiEvent> {
   }
 
   String selectedCategory = "overview";
+  void _showParticipat(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.fromLTRB(24, 15, 24, 15),
+          height: 215,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "Anda yakin ingin berpartisipasi menjadi sponsor untuk acara ini?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(
+                height: 25,
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(24, 15, 24, 15),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.fromLTRB(24, 15, 24, 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        backgroundColor: Color(0xFF1EAAFD),
+                        minimumSize: Size(800, 50),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProsesKerjaSama(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "Saya Yakin",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,6 +213,7 @@ class _InfromasiEventState extends State<InfromasiEvent> {
       ),
       body: SingleChildScrollView(
         child: Container(
+          color: const Color.fromRGBO(244, 244, 244, 100),
           child: Padding(
             padding: EdgeInsets.fromLTRB(24, 20, 24, 24),
             child: Column(
@@ -267,7 +333,9 @@ class _InfromasiEventState extends State<InfromasiEvent> {
                 backgroundColor: Color(0xFF1EAAFD),
                 minimumSize: Size(800, 50),
               ),
-              onPressed: () {},
+              onPressed: () {
+                _showParticipat(context);
+              },
               child: Text(
                 "Ajukan kerja sama",
                 style: TextStyle(
