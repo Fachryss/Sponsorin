@@ -1,111 +1,200 @@
-
 import 'package:flutter/material.dart';
+import 'package:sponsorin/page%20EO/profile/edit-akun.dart';
+import 'package:sponsorin/page%20Usaha/profile/edit-akun.dart';
 
-class Profile extends StatefulWidget {
+class ProfileEO extends StatefulWidget {
+  const ProfileEO({super.key});
+
   @override
-  _ProfileState createState() => _ProfileState();
+  State<ProfileEO> createState() => _ProfileEOState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileEOState extends State<ProfileEO> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(244, 244, 244, 100), // Light background color
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 30), // Add space at the top
-            // Profile Picture and Name
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.pink[100], // Background color of the avatar
-              child: CircleAvatar(
-                radius: 45,
-                // backgroundImage: AssetImage('assets/profile_image.png'), // Replace with your image
-              ),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Haza',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 5),
-            Text(
-              'hazz@gmail.com',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 30),
-            // Profile Options
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    spreadRadius: 5,
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: Icon(Icons.person_outline),
-                    title: Text('Profile'),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      // Navigate to profile details
-                    },
-                  ),
-                  Divider(),
-                  ListTile(
-                    leading: Icon(Icons.history),
-                    title: Text('History Event'),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      // Navigate to history event
-                    },
-                  ),
-                  Divider(),
-                  ListTile(
-                    leading: Icon(Icons.settings_outlined),
-                    title: Text('Settings'),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      // Navigate to settings
-                    },
-                  ),
-                  Divider(),
-                  ListTile(
-                    leading: Icon(Icons.logout),
-                    title: Text('Log Out'),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      // Log out logic here
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          "Profile",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        color: const Color.fromRGBO(244, 244, 244, 100),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 20, 24, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor:
+                          Colors.pink[100], // Background color of the avatar
+                      child: CircleAvatar(
+                        radius: 45,
+                        // backgroundImage: AssetImage('assets/profile_image.png'), // Replace with your image
+                      ),
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    Text(
+                      'Leanardo',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      'leanardo@gmail.com',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 100,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color.fromARGB(255, 231, 231, 231),
+                            blurRadius: 2,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: Icon(
+                              Icons.person_outline_rounded,
+                              color: Color(0xFF1EAAFD),
+                              size: 25,
+                            ),
+                            title: Text(
+                              'Profile',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black54),
+                            ),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              size: 18,
+                              color: Color(0xFF1EAAFD),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditAkunEO(),
+                                ),
+                              );
+                            },
+                          ),
+                          Divider(
+                            color: Color.fromARGB(255, 231, 231, 231),
+                          ),
+                          ListTile(
+                            leading: Icon(
+                              Icons.history,
+                              color: Color(0xFF1EAAFD),
+                              size: 25,
+                            ),
+                            title: Text(
+                              'History Event',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black54),
+                            ),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              size: 18,
+                              color: Color(0xFF1EAAFD),
+                            ),
+                            onTap: () {
+                              // Navigate to history event
+                            },
+                          ),
+                          Divider(
+                            color: Color.fromARGB(255, 231, 231, 231),
+                          ),
+                          ListTile(
+                            leading: Icon(
+                              Icons.settings_outlined,
+                              color: Color(0xFF1EAAFD),
+                              size: 25,
+                            ),
+                            title: Text(
+                              'Settings',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black54),
+                            ),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              size: 18,
+                              color: Color(0xFF1EAAFD),
+                            ),
+                            onTap: () {
+                              // Navigate to settings
+                            },
+                          ),
+                          Divider(
+                            color: Color.fromARGB(255, 231, 231, 231),
+                          ),
+                          ListTile(
+                            leading: Icon(
+                              Icons.logout,
+                              color: Color(0xFF1EAAFD),
+                              size: 25,
+                            ),
+                            title: Text(
+                              'Log Out',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black54),
+                            ),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              size: 18,
+                              color: Color(0xFF1EAAFD),
+                            ),
+                            onTap: () {
+                              // Log out logic here
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: Profile(),
-  ));
 }
