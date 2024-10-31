@@ -16,6 +16,7 @@ import 'package:sponsorin/page%20Usaha/search/search-page.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:sponsorin/style/textstyle.dart';
+import 'package:sponsorin/page%20Usaha/tanggal%20event/tanggal-event.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
       debugShowCheckedModeBanner: false,
       title: 'Business App',
       theme: ThemeData(
