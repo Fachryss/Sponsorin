@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sponsorin/main.dart';
+import 'package:sponsorin/page%20EO/page%20proses/proses-add-event.dart';
 import 'package:sponsorin/page%20EO/page%20proses/proses-proposal.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -124,14 +125,16 @@ class _FormEventState extends State<FormEvent> {
               content: Text('Please upload a file in PDF or Word format.')),
         );
       }
-
+    }
+  }
 
   void _pickFileLogo() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
-      final fileUrl = await _uploadFileToStorage(result.files.single, 'logo');
+      final file = result.files.single;
+      final fileUrl = await _uploadFileToStorage(file, 'logo');
       setState(() {
-        _fileNamesLogo.add(fileUrl); // Simpan URL ke Firestore nanti
+        _fileNamesLogo.add(file.name); // Simpan nama file alih-alih URL
         _fileControllerLogo.clear();
       });
     }
@@ -150,10 +153,6 @@ class _FormEventState extends State<FormEvent> {
     setState(() {
       _fileNamesLogo.remove(fileName);
     });
-  }
-
-
-    }
   }
 
   // List management methods
@@ -519,7 +518,7 @@ class _FormEventState extends State<FormEvent> {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 8),
               Wrap(
                 spacing: 8.0,
                 children: _tags
@@ -575,7 +574,7 @@ class _FormEventState extends State<FormEvent> {
                           ))
                       .toList(),
                 ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
 
               buildTextAdderTextField(
                 controller: _fileControllerKegiatan,
@@ -700,7 +699,7 @@ class _FormEventState extends State<FormEvent> {
               //     ),
               //   ),
               // ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
 
               TextField(
                 readOnly: true,
@@ -731,28 +730,58 @@ class _FormEventState extends State<FormEvent> {
                 ),
               ),
 
-              TextFormField(
-                controller: _fileControllerLogo,
+              const SizedBox(height: 16),
+
+              TextField(
                 readOnly: true,
+                onTap: _pickFileLogo,
+                controller: _fileControllerLogo,
                 decoration: InputDecoration(
-                  labelText: 'Logo',
-                  border: const OutlineInputBorder(),
-                  suffixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.upload_file),
-                        onPressed: _pickFileLogo,
-                      ),
-                    ],
+                  hintText: "Logo event",
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      Icons.file_upload_outlined,
+                      color: Color(0xFF1EAAFD),
+                    ),
+                    onPressed: _pickFileLogo,
+                  ),
+                  hintStyle: TextStyle(
+                    color: Colors.black45,
+                    fontSize: 15,
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide:
+                        BorderSide(color: Color.fromRGBO(89, 89, 89, 100)),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide: BorderSide(color: Colors.black87),
                   ),
                 ),
               ),
+
+              // TextFormField(
+              //   controller: _fileControllerLogo,
+              //   readOnly: true,
+              //   decoration: InputDecoration(
+              //     labelText: 'Logo',
+              //     border: const OutlineInputBorder(),
+              //     suffixIcon: Row(
+              //       mainAxisSize: MainAxisSize.min,
+              //       children: [
+              //         IconButton(
+              //           icon: const Icon(Icons.upload_file),
+              //           onPressed: _pickFileLogo,
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               buildTextList(
                 texts: _fileNamesLogo,
                 onRemove: _removeFileNameLogo,
               ),
-
             ],
           ),
         ),
@@ -773,7 +802,7 @@ class _FormEventState extends State<FormEvent> {
             _submitEvent();
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProsesProposal()),
+              MaterialPageRoute(builder: (context) => ProsesAddEvent()),
             );
           },
           child: Text(

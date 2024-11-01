@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sponsorin/main.dart';
+import 'package:sponsorin/page%20EO/add%20event/add-event.dart';
 
 class ProsesAddEvent extends StatefulWidget {
   const ProsesAddEvent({super.key});
@@ -8,6 +10,19 @@ class ProsesAddEvent extends StatefulWidget {
 }
 
 class _ProsesAddEventState extends State<ProsesAddEvent> {
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(seconds: 5), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage(role: 'EO')),
+        );
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
