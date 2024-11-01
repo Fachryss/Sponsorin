@@ -64,10 +64,12 @@ class _FormEventState extends State<FormEvent> {
   final List<String> _listSponsorsip = [];
 
   final List<String> _suggestions = [
-    "Event",
-    "Seminar",
-    "Workshop",
-    "Conference"
+    "Musik",
+    "Olahraga",
+    "Seni & Budaya",
+    "Bisnis & Budaya",
+    "Bisnis & Teknologi",
+    "Pendidikan"
   ];
 
   Future<String> _uploadFileToStorage(
@@ -88,14 +90,41 @@ class _FormEventState extends State<FormEvent> {
   void _pickFileDokum() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
-      final fileUrl =
-          await _uploadFileToStorage(result.files.single, 'documentation');
+      final file = result.files.single;
+      final fileUrl = await _uploadFileToStorage(file, 'documentation');
       setState(() {
-        _fileNamesDocum.add(fileUrl); // Simpan URL ke Firestore nanti
+        _fileNamesDocum.add(file.name); // Simpan nama file alih-alih URL
         _fileControllerdokum.clear();
       });
     }
   }
+
+  String? _fileNameProposal;
+
+  // Existing methods...
+
+  void _pickFileProposal() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'docx'],
+    );
+    if (result != null) {
+      final file = result.files.single;
+      final fileExtension = file.extension?.toLowerCase();
+      if (fileExtension == 'pdf' || fileExtension == 'docx') {
+        final fileUrl = await _uploadFileToStorage(file, 'proposal');
+        setState(() {
+          _fileNameProposal = file.name; // Simpan nama file
+          _fileControllerProposal.text =
+              file.name; // Simpan URL ke Firestore nanti
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Please upload a file in PDF or Word format.')),
+        );
+      }
+
 
   void _pickFileLogo() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
@@ -123,14 +152,7 @@ class _FormEventState extends State<FormEvent> {
     });
   }
 
-  void _pickFileProposal() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      final fileUrl =
-          await _uploadFileToStorage(result.files.single, 'proposal');
-      setState(() {
-        _fileControllerProposal.text = fileUrl; // Simpan URL ke Firestore nanti
-      });
+
     }
   }
 
@@ -352,9 +374,21 @@ class _FormEventState extends State<FormEvent> {
               // buildTextAdderTextField(controller: _nameController, onAddText: , Title: '')
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Event Name *',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  hintText: 'Nama event',
+                  hintStyle: TextStyle(
+                    color: Colors.black45,
+                    fontSize: 15,
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide:
+                        BorderSide(color: Color.fromRGBO(89, 89, 89, 1)),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide: BorderSide(color: Colors.black87),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -367,9 +401,21 @@ class _FormEventState extends State<FormEvent> {
 
               TextFormField(
                 controller: _locationController,
-                decoration: const InputDecoration(
-                  labelText: 'Location *',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  hintText: 'Lokasi event',
+                  hintStyle: TextStyle(
+                    color: Colors.black45,
+                    fontSize: 15,
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide:
+                        BorderSide(color: Color.fromRGBO(89, 89, 89, 1)),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide: BorderSide(color: Colors.black87),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -381,9 +427,23 @@ class _FormEventState extends State<FormEvent> {
               const SizedBox(height: 16),
 
               IntlPhoneField(
-                decoration: const InputDecoration(
-                  labelText: 'Phone Number *',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: 'Nomor telepon',
+                  labelStyle: TextStyle(color: Colors.black45, fontSize: 15),
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.zero,
+                    borderSide:
+                        BorderSide(color: Color.fromRGBO(89, 89, 89, 100)),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide:
+                        BorderSide(color: Color.fromRGBO(89, 89, 89, 100)),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide: BorderSide(color: Colors.black87),
+                  ),
                 ),
                 initialCountryCode: 'ID',
                 onChanged: (phone) {
@@ -394,11 +454,31 @@ class _FormEventState extends State<FormEvent> {
 
               TextFormField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description *',
-                  border: OutlineInputBorder(),
+                maxLines: null,
+                decoration: InputDecoration(
+                  hintText: "Deskripsi event",
+                  hintStyle: TextStyle(
+                    color: Colors.black45,
+                    fontSize: 15,
+                  ),
+                  contentPadding: const EdgeInsets.all(16),
+                  filled: true,
+                  fillColor: Colors.transparent,
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.zero,
+                    borderSide:
+                        BorderSide(color: Color.fromRGBO(89, 89, 89, 100)),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide:
+                        BorderSide(color: Color.fromRGBO(89, 89, 89, 100)),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide: BorderSide(color: Colors.black87),
+                  ),
                 ),
-                maxLines: 3,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter description';
@@ -411,27 +491,51 @@ class _FormEventState extends State<FormEvent> {
               // Tags
               TextField(
                 controller: _tagController,
+                onChanged: (text) {
+                  setState(() {});
+                },
                 decoration: InputDecoration(
-                  labelText: 'Tags',
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      if (_tagController.text.isNotEmpty) {
-                        setState(() {
-                          _tags.add(_tagController.text);
-                          _tagController.clear();
-                        });
-                      }
-                    },
+                  hintText: 'Tags event',
+                  hintStyle: const TextStyle(
+                    color: Colors.black45,
+                    fontSize: 15,
+                  ),
+                  contentPadding: const EdgeInsets.all(16),
+                  filled: true,
+                  fillColor: Colors.transparent,
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.zero,
+                    borderSide:
+                        BorderSide(color: Color.fromRGBO(89, 89, 89, 100)),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide:
+                        BorderSide(color: Color.fromRGBO(89, 89, 89, 100)),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide: BorderSide(color: Colors.black87),
                   ),
                 ),
               ),
+              SizedBox(height: 10),
               Wrap(
                 spacing: 8.0,
                 children: _tags
                     .map((tag) => Chip(
                           label: Text(tag),
+                          labelStyle: TextStyle(color: Colors.white),
+                          backgroundColor: Colors.blue,
+                          deleteIcon: Icon(
+                            Icons.remove_circle_outline_sharp,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                            side: BorderSide(color: Colors.white),
+                          ),
                           onDeleted: () {
                             setState(() {
                               _tags.remove(tag);
@@ -440,12 +544,43 @@ class _FormEventState extends State<FormEvent> {
                         ))
                     .toList(),
               ),
+              if (_tagController.text.isNotEmpty)
+                Wrap(
+                  spacing: 8.0,
+                  children: _suggestions
+                      .where((tag) => tag
+                          .toLowerCase()
+                          .contains(_tagController.text.toLowerCase()))
+                      .map((tag) => GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (!_tags.contains(tag)) _tags.add(tag);
+                                _tagController.clear();
+                              });
+                            },
+                            child: Chip(
+                              label: Text(tag),
+                              labelStyle: TextStyle(color: Colors.white),
+                              backgroundColor: Colors.blue,
+                              deleteIcon: Icon(
+                                Icons.remove_circle_outline_sharp,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                side: BorderSide(color: Colors.white),
+                              ),
+                            ),
+                          ))
+                      .toList(),
+                ),
               const SizedBox(height: 16),
 
               buildTextAdderTextField(
                 controller: _fileControllerKegiatan,
                 onAddText: _addKegiatanEvent,
-                Title: "Event Activities",
+                Title: "Kegiatan event",
               ),
               buildTextList(
                 texts: _listKegiatanEvent,
@@ -456,7 +591,7 @@ class _FormEventState extends State<FormEvent> {
               buildTextAdderTextField(
                 controller: _fileControllerTargetAudiens,
                 onAddText: _addTargetAudiens,
-                Title: "Target Audience",
+                Title: "Target audiens",
               ),
               buildTextList(
                 texts: _listTargetAudiens,
@@ -467,7 +602,7 @@ class _FormEventState extends State<FormEvent> {
               buildTextAdderTextField(
                 controller: _fileControllerDemografiAudiens,
                 onAddText: _addDemografiAudiens,
-                Title: "Demographics",
+                Title: "Demografi audiens",
               ),
               buildTextList(
                 texts: _listDemografiAudiens,
@@ -478,7 +613,7 @@ class _FormEventState extends State<FormEvent> {
               buildTextAdderTextField(
                 controller: _fileControllerSponsorsip,
                 onAddText: _addSponsorsip,
-                Title: "Sponsorship Packages",
+                Title: "Paket sponsorsip",
               ),
               buildTextList(
                 texts: _listSponsorsip,
@@ -487,45 +622,115 @@ class _FormEventState extends State<FormEvent> {
               const SizedBox(height: 16),
 
               // File upload fields
-              TextFormField(
+              TextField(
                 controller: _fileControllerdokum,
                 readOnly: true,
+                onTap: _pickFileDokum,
                 decoration: InputDecoration(
-                  labelText: 'Documentation',
-                  border: const OutlineInputBorder(),
-                  suffixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.upload_file),
-                        onPressed: _pickFileDokum,
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: _addFileNameDocum,
-                      ),
-                    ],
+                  hintText: "Dokumentasi event",
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      Icons.add_circle,
+                      color: Color(0xFF1EAAFD),
+                    ),
+                    onPressed: _addFileNameDocum,
+                  ),
+                  hintStyle: TextStyle(
+                    color: Colors.black45,
+                    fontSize: 15,
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide:
+                        BorderSide(color: Color.fromRGBO(89, 89, 89, 100)),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide: BorderSide(color: Colors.black87),
                   ),
                 ),
               ),
-              buildTextList(
-                texts: _fileNamesDocum,
-                onRemove: _removeFileNameDocum,
+              SizedBox(height: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _fileNamesDocum.map((fileName) {
+                  return fileName.isNotEmpty
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(fileName), // Tampilkan nama file
+                            IconButton(
+                              icon: Icon(Icons.cancel, color: Colors.red),
+                              onPressed: () {
+                                setState(() {
+                                  _fileNamesDocum.remove(fileName);
+                                });
+                              },
+                            ),
+                          ],
+                        )
+                      : Container(); // Return an empty container if fileName is empty
+                }).toList(),
               ),
+              // TextField(
+              //   controller: _fileControllerdokum,
+              //   readOnly: true,
+              //   onTap: _pickFileDokum,
+              //   decoration: InputDecoration(
+              //     hintText: "Dokumentasi event",
+              //     suffixIcon: IconButton(
+              //       icon: Icon(
+              //         Icons.add_circle,
+              //         color: Color(0xFF1EAAFD),
+              //       ),
+              //       onPressed: _addFileNameDocum,
+              //     ),
+              //     hintStyle: TextStyle(
+              //       color: Colors.black45,
+              //       fontSize: 15,
+              //     ),
+              //     enabledBorder: const OutlineInputBorder(
+              //       borderRadius: BorderRadius.all(Radius.circular(6)),
+              //       borderSide:
+              //           BorderSide(color: Color.fromRGBO(89, 89, 89, 100)),
+              //     ),
+              //     focusedBorder: const OutlineInputBorder(
+              //       borderRadius: BorderRadius.all(Radius.circular(6)),
+              //       borderSide: BorderSide(color: Colors.black87),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 16),
 
-              TextFormField(
-                controller: _fileControllerProposal,
+              TextField(
                 readOnly: true,
+                onTap: _pickFileProposal,
+                controller: _fileControllerProposal,
                 decoration: InputDecoration(
-                  labelText: 'Proposal',
-                  border: const OutlineInputBorder(),
+                  hintText: "Proposal event",
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.upload_file),
+                    icon: Icon(
+                      Icons.file_upload_outlined,
+                      color: Color(0xFF1EAAFD),
+                    ),
                     onPressed: _pickFileProposal,
+                  ),
+                  hintStyle: TextStyle(
+                    color: Colors.black45,
+                    fontSize: 15,
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide:
+                        BorderSide(color: Color.fromRGBO(89, 89, 89, 100)),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    borderSide: BorderSide(color: Colors.black87),
                   ),
                 ),
               ),
+
               TextFormField(
                 controller: _fileControllerLogo,
                 readOnly: true,
@@ -547,24 +752,54 @@ class _FormEventState extends State<FormEvent> {
                 texts: _fileNamesLogo,
                 onRemove: _removeFileNameLogo,
               ),
+
             ],
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
+      bottomNavigationBar: Container(
+        margin: EdgeInsets.fromLTRB(
+            24, 15, 24, 15), // Jarak dari samping kiri, kanan, dan bawah
         child: ElevatedButton(
-          onPressed: _submitEvent,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF1EAAFD),
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            backgroundColor: Color(0xFF1EAAFD),
+            minimumSize: Size(200, 50), // Ukuran minimum tombol
           ),
-          child: const Text(
-            'Submit Event',
-            style: TextStyle(fontSize: 18),
+          onPressed: () {
+            _submitEvent();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProsesProposal()),
+            );
+          },
+          child: Text(
+            "Tambahkan Event",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 18,
+            ),
           ),
         ),
       ),
+      // bottomNavigationBar: Padding(
+      //   padding: const EdgeInsets.all(16.0),
+      //   child: ElevatedButton(
+      //     onPressed: _submitEvent,
+      //     style: ElevatedButton.styleFrom(
+      //       backgroundColor: const Color(0xFF1EAAFD),
+      //       padding: const EdgeInsets.symmetric(vertical: 16),
+      //     ),
+      //     child: const Text(
+      //       'Submit Event',
+      //       style: TextStyle(fontSize: 18),
+      //     ),
+      //   ),
+      // ),
     );
   }
 
