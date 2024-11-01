@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sponsorin/main.dart';
 import 'package:sponsorin/page%20EO/page%20proses/proses-proposal.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -39,6 +40,9 @@ class _FormEventState extends State<FormEvent> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _tagController = TextEditingController();
+  final TextEditingController _fileControllerLogo = TextEditingController();
+
+  final List<String> _fileNamesLogo = [];
 
   // Controllers for file and list management
   final TextEditingController _fileControllerdokum = TextEditingController();
@@ -120,6 +124,35 @@ class _FormEventState extends State<FormEvent> {
               content: Text('Please upload a file in PDF or Word format.')),
         );
       }
+
+
+  void _pickFileLogo() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      final fileUrl = await _uploadFileToStorage(result.files.single, 'logo');
+      setState(() {
+        _fileNamesLogo.add(fileUrl); // Simpan URL ke Firestore nanti
+        _fileControllerLogo.clear();
+      });
+    }
+  }
+
+  void _addFileNameLogo() {
+    if (_fileControllerLogo.text.isNotEmpty) {
+      setState(() {
+        _fileNamesLogo.add(_fileControllerLogo.text);
+        _fileControllerLogo.clear();
+      });
+    }
+  }
+
+  void _removeFileNameLogo(String fileName) {
+    setState(() {
+      _fileNamesLogo.remove(fileName);
+    });
+  }
+
+
     }
   }
 
@@ -240,14 +273,21 @@ class _FormEventState extends State<FormEvent> {
 
       await _firestore.collection('Event').doc(eventId).set(eventData);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Event berhasil ditambahkan!')),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(content: Text('Event berhasil ditambahkan!')),
+      // );
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const ProsesProposal()),
       );
+
+      // Future.delayed(const Duration(seconds: 5), () {
+      //   Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => HomePage(role: 'EO',)),
+      //   );
+      // });
     } catch (e) {
       print('Error submitting event: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -691,18 +731,28 @@ class _FormEventState extends State<FormEvent> {
                 ),
               ),
 
-              // TextFormField(
-              //   controller: _fileControllerProposal,
-              //   readOnly: true,
-              //   decoration: InputDecoration(
-              //     labelText: 'Proposal',
-              //     border: const OutlineInputBorder(),
-              //     suffixIcon: IconButton(
-              //       icon: const Icon(Icons.upload_file),
-              //       onPressed: _pickFileProposal,
-              //     ),
-              //   ),
-              // ),
+              TextFormField(
+                controller: _fileControllerLogo,
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: 'Logo',
+                  border: const OutlineInputBorder(),
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.upload_file),
+                        onPressed: _pickFileLogo,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              buildTextList(
+                texts: _fileNamesLogo,
+                onRemove: _removeFileNameLogo,
+              ),
+
             ],
           ),
         ),

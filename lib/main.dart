@@ -40,7 +40,9 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         textTheme: const TextTheme(),
       ),
+
       home: AddEvent(),
+
     );
   }
 }
@@ -57,7 +59,7 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List<Widget> _EOPages = [
-    Homepage(),
+    HomepageEO(),
     SearchPage(),
     AddEvent(), // Add your other pages here
     ProfileEO(), // Example: Placeholder, you can add actual pages
@@ -70,6 +72,18 @@ class _HomePageState extends State<HomePage> {
     ProfileUsaha()
   ];
   List<BottomNavigationBarItem> _buildNavBarItems() {
+    // return [
+    //   BottomNavigationBarItem(
+    //             icon: _buildNavItem(0, Icons.home_outlined), label: ''),
+    //         BottomNavigationBarItem(
+    //             icon: _buildNavItem(1, Icons.search_rounded), label: ''),
+    //         BottomNavigationBarItem(
+    //             icon: _buildNavItem(2, Icons.add_rounded), label: ''),
+    //         BottomNavigationBarItem(
+    //             icon: _buildNavItem(3, Icons.person_outline_rounded),
+    //             label: '')
+    // ];
+    
     return widget.role == 'EO'
         ? [
             BottomNavigationBarItem(
@@ -104,7 +118,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final pages = widget.role == 'EO' ? _EOPages : _UsahaPages;
-
     return Scaffold(
       body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -135,7 +148,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
+ //ya Allah ya Rahman ya Rahim ya Malik ya Kuddus ya Salam ya Mukmin ya Muhaimin ya Aziz ya Jabbar ya Mutakobbir ya Kholiq ya Bariq ya Mushowwir ya Gafar ya Qohar ya ya Wahhab ya Razzaq ya Fattah ya Alim ya Qobid ya Basit ya Khofid ya Rafi ya Muizz ya Mudzil ya Sami ya Basir ya Hakam ya Adl ya Latif ya Khabir ya Halim ya Azim ya Ghofur ya Syakur ya Ali ya Karim ya Raqib ya Mujib ya Wasi ya Hakim ya Wadud ya Majid ya Bais ya Syahid ya Haqq ya Wakil ya Qawi ya Matin ya Wali ya Hamid ya Muhshiy ya Mubdi ya Mu'id ya Muhyi ya Mumit ya Hayy ya Qayyum ya Wajid ya Majid ya Wahid ya Ahad ya Samad ya Qadir ya Muqtadir ya Muqaddim ya Muakhkhir ya Awwal ya Akhir ya Zaljalali wal Ikram ya Badi ya Baki ya Warits ya Rashid ya Sabur.
   // Bottom Navigation Item UI
   Widget _buildNavItem(int index, IconData icon) {
     return Stack(
