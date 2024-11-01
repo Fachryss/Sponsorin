@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sponsorin/page%20EO/page%20home/custom-container-panjang.dart';
 
 class SearchPage extends StatefulWidget {
@@ -9,55 +10,61 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  String selectedCategory = "Retail";
-  String _searchQuery = ""; // Tambahkan variabel untuk pencarian
+  String selectedCategory = "All";
+  String _searchQuery = "";
+  bool isLoading = true;
+  Map<String, List<Map<String, String>>> businessData = {};
 
-  final Map<String, List<Map<String, String>>> businessData = {
-    "Retail": [
-      {
-        "image": "image/ibox.png",
-        "title": "iBox",
-        "subtitle": "iBox adalah reseller premium Apple terkemuka di Indonesia."
-      },
-      {
-        "image": "image/informa.png",
-        "title": "Informa",
-        "subtitle": "Retail Informa"
-      },
-    ],
-    "Makanan": [
-      {
-        "image": "image/warungWareg.png",
-        "title": "Warung Wareg",
-        "subtitle":
-            "Menawarkan makanan tradisional Indonesia dengan harga terjangkau"
-      },
-      {
-        "image": "image/aqua.png",
-        "title": "Aqua",
-        "subtitle": "Aqua adalah air mineral yang sudah dikenal sejak lama"
-      },
-    ],
-    "Jasa": [
-      {
-        "image": "image/hisana.jpeg",
-        "title": "Hisana",
-        "subtitle":
-            "Hisana Fried Chicken adalah merek ayam goreng krispi buatan asli anak bangsa yang enaknya disuka di Indonesia."
-      },
-      {
-        "image": "image/kfc-logo.png",
-        "title": "KFC",
-        "subtitle":
-            "KFC (Kentucky Fried Chicken) adalah jaringan restoran cepat saji asal Amerika Serikat yang terkenal dengan ayam gorengnya."
-      },
-    ],
-    // Tambahkan data untuk kategori lainnya
-  };
+  @override
+  void initState() {
+    super.initState();
+    fetchDataFromFirestore();
+  }
 
-  // Fungsi untuk mengambil semua bisnis tanpa kategori
-  List<Map<String, String>> getAllBusinesses() {
-    return businessData.values.expand((list) => list).toList();
+  Future<void> fetchDataFromFirestore() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('Companies').get();
+      for (var doc in querySnapshot.docs) {
+        var companyData = doc.data() as Map<String, dynamic>;
+        List<String> categories = getCategoriesFromField(companyData['category']);
+
+        Map<String, String> businessEntry = {
+          "image": companyData['image'] ?? "",
+          "title": companyData['name'] ?? "",
+          "subtitle": companyData['subtitle'] ?? "",
+          "description": companyData['description'] ?? "",
+          "address": companyData['location'] ?? "",
+          "category": categories.join(', '),
+        };
+
+        for (String category in categories) {
+          if (businessData.containsKey(category)) {
+            businessData[category]!.add(businessEntry);
+          } else {
+            businessData[category] = [businessEntry];
+          }
+        }
+      }
+
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching data from Firestore: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  List<String> getCategoriesFromField(dynamic categoryField) {
+    if (categoryField is String) {
+      return [categoryField];
+    } else if (categoryField is List) {
+      return categoryField.map((e) => e.toString()).toList();
+    }
+    return ['Unknown'];
   }
 
   Widget _categoryButton(String text, bool isSelected, IconData icon) {
@@ -65,7 +72,7 @@ class _SearchPageState extends State<SearchPage> {
       onPressed: () {
         setState(() {
           selectedCategory = text;
-          _searchQuery = ""; // Reset pencarian saat kategori diubah
+          _searchQuery = "";
         });
       },
       style: ElevatedButton.styleFrom(
@@ -81,13 +88,15 @@ class _SearchPageState extends State<SearchPage> {
         children: [
           Icon(icon, size: 20),
           SizedBox(width: 5),
-          Text(text,
-              style: TextStyle(
-                color: isSelected
-                    ? Colors.white
-                    : Color.fromARGB(255, 109, 109, 109),
-                fontWeight: FontWeight.bold,
-              )),
+          Text(
+            text,
+            style: TextStyle(
+              color: isSelected
+                  ? Colors.white
+                  : Color.fromARGB(255, 109, 109, 109),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );
@@ -95,23 +104,29 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Jika ada pencarian, kita ambil semua bisnis dan filter berdasarkan query
-    List<Map<String, String>> displayedBusinesses = _searchQuery.isNotEmpty
-        ? getAllBusinesses().where((business) {
+    List<Map<String, String>> displayedBusinesses = [];
+
+    if (_searchQuery.isNotEmpty) {
+      displayedBusinesses = businessData.values
+          .expand((list) => list)
+          .where((business) {
             return business["title"]!
                 .toLowerCase()
                 .contains(_searchQuery.toLowerCase());
-          }).toList()
-        : businessData[selectedCategory] ?? [];
+          })
+          .toList();
+    } else if (selectedCategory == "All") {
+      displayedBusinesses = businessData.values.expand((list) => list).toList();
+    } else {
+      displayedBusinesses = businessData[selectedCategory] ?? [];
+    }
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(244, 244, 244, 100),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(
-              right: 20,
-            ), // Set the same right padding
+            padding: const EdgeInsets.only(right: 20),
             child: Container(
               width: 50,
               height: 50,
@@ -128,7 +143,7 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ],
         leading: Padding(
-          padding: const EdgeInsets.only(left: 20), // Set the same left padding
+          padding: const EdgeInsets.only(left: 20),
           child: Container(
             width: 50,
             height: 50,
@@ -140,100 +155,93 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          color: Color.fromRGBO(244, 244, 244, 100),
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(24, 20, 24, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      _searchQuery = value; // Perbarui query pencarian
-                    });
-                  },
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: 'Cari perusahaan di sini',
-                    hintStyle: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: EdgeInsets.fromLTRB(24, 20, 24, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: 'Cari perusahaan di sini',
+                      hintStyle: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Color(0xFF539DF3),
+                        size: 26,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(vertical: 15),
                     ),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color:
-                          Color(0xFF539DF3), // Set the color of the search icon
-                      size: 26, // Set the size of the search icon
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 15),
                   ),
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _categoryButton("Retail", selectedCategory == "Retail",
-                          Icons.card_travel),
-                      SizedBox(width: 15),
-                      _categoryButton("Makanan", selectedCategory == "Makanan",
-                          Icons.fastfood_outlined),
-                      SizedBox(width: 15),
-                      _categoryButton("Jasa", selectedCategory == "Jasa",
-                          Icons.handyman_outlined),
-                      SizedBox(width: 15),
-                      _categoryButton(
-                          "Kesehatan",
-                          selectedCategory == "Kesehatan",
-                          Icons.local_hospital_outlined),
-                      SizedBox(width: 15),
-                      _categoryButton(
-                          "Pendidikan",
-                          selectedCategory == "Pendidikan",
-                          Icons.school_outlined),
-                      SizedBox(width: 15),
-                      _categoryButton("Hiburan", selectedCategory == "Hiburan",
-                          Icons.park_outlined),
-                    ],
+                  SizedBox(height: 25),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _categoryButton("All", selectedCategory == "All",
+                            Icons.all_inclusive),
+                        SizedBox(width: 15),
+                        _categoryButton("Retail", selectedCategory == "Retail",
+                            Icons.card_travel),
+                        SizedBox(width: 15),
+                        _categoryButton("Makanan", selectedCategory == "Makanan",
+                            Icons.fastfood_outlined),
+                        SizedBox(width: 15),
+                        _categoryButton("Jasa", selectedCategory == "Jasa",
+                            Icons.handyman_outlined),
+                        SizedBox(width: 15),
+                        _categoryButton("Kesehatan", selectedCategory == "Kesehatan",
+                            Icons.local_hospital_outlined),
+                        SizedBox(width: 15),
+                        _categoryButton("Pendidikan", selectedCategory == "Pendidikan",
+                            Icons.school_outlined),
+                        SizedBox(width: 15),
+                        _categoryButton("Hiburan", selectedCategory == "Hiburan",
+                            Icons.park_outlined),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                // Column(
-                //   children: displayedBusinesses
-                //       .map((business) => Padding(
-                //             padding: const EdgeInsets.only(bottom: 15),
-                //             child: BuildContainerPanjang(
-                //               context:
-                //                   context, // Pass the context for navigation
-                //               imagePath: business["image"]!,
-                //               title: business["title"]!,
-                //               sub: business["subtitle"]!,
-                //               category: business["category"] ??
-                //                   'Unknown', // Use ?? for default value
-                //               address: business["address"]!,
-                //               description: business["description"]!,
-                //             ),
-                //           ))
-                //       .toList(),
-                // ),
-              ],
+                  SizedBox(height: 25),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: displayedBusinesses.length,
+                      itemBuilder: (context, index) {
+                        final business = displayedBusinesses[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: BuildContainerPanjang(
+                            context: context,
+                            imagePath: business["image"]!,
+                            title: business["title"]!,
+                            sub: business["subtitle"]!,
+                            category: business["category"] ?? 'Unknown',
+                            address: business["address"] ?? 'Unknown',
+                            description: business["description"] ??
+                                'No description available',
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }

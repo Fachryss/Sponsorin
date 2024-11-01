@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sponsorin/page%20EO/page%20home/custom-container-panjang.dart';
 import 'package:sponsorin/page%20EO/page%20home/custom-container.dart';
@@ -16,16 +17,36 @@ class _HomepageEOState extends State<HomepageEO> {
   String selectedCategory = "Retail";
   bool isLoading = true;
   String? error;
-
+  String userName = "User"; // Default username
   Map<String, List<Map<String, String>>> businessData = {};
 
   @override
   void initState() {
     super.initState();
+    fetchUserName();
     fetchDataFromFirestore();
   }
 
-  // Helper function to handle category conversion
+  // Fetch the name field from Firestore
+  Future<void> fetchUserName() async {
+  try {
+    // Get the current user's UID
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    
+    // Fetch the 'name' field from the 'users' collection
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    
+    setState(() {
+      userName = userDoc['name'] ?? 'User';
+    });
+  } catch (e) {
+    print("Error fetching user name: $e");
+    setState(() {
+      userName = 'User';
+    });
+  }
+}
+
   List<String> getCategoriesFromField(dynamic categoryField) {
     if (categoryField is String) {
       return [categoryField];
@@ -35,7 +56,6 @@ class _HomepageEOState extends State<HomepageEO> {
     return ['Unknown'];
   }
 
-  // Updated fetch function to handle both String and List categories
   Future<void> fetchDataFromFirestore() async {
     try {
       QuerySnapshot querySnapshot =
@@ -46,27 +66,22 @@ class _HomepageEOState extends State<HomepageEO> {
         var companyData = doc.data() as Map<String, dynamic>;
         print("Company data: $companyData");
 
-        // Get all categories for this company
         List<String> categories = getCategoriesFromField(companyData['category']);
-        
-        // Company details
         String image = companyData['image'] ?? "";
         String name = companyData['name'] ?? "";
         String subtitle = companyData['subtitle'] ?? "";
         String description = companyData['description'] ?? "";
         String address = companyData['location'] ?? "";
 
-        // Create business entry
         Map<String, String> businessEntry = {
           "image": image,
           "title": name,
           "subtitle": subtitle,
           "description": description,
           "address": address,
-          "category": categories.join(', '), // Join multiple categories for display
+          "category": categories.join(', '),
         };
 
-        // Add the business entry to each of its categories
         for (String category in categories) {
           if (businessData.containsKey(category)) {
             businessData[category]!.add(businessEntry);
@@ -127,8 +142,7 @@ class _HomepageEOState extends State<HomepageEO> {
     businessData.forEach((key, value) {
       allBusinesses.addAll(value);
     });
-    
-    // Remove duplicates based on title
+
     allBusinesses = allBusinesses.toSet().toList();
     allBusinesses.shuffle(Random());
     return allBusinesses.take(count).toList();
@@ -148,9 +162,8 @@ class _HomepageEOState extends State<HomepageEO> {
           Padding(
             padding: const EdgeInsets.only(
               right: 20,
-            ), // Set the same right padding
+            ),
             child: Container(
-              // color: Colors.yellow,
               width: 50,
               height: 50,
               decoration: BoxDecoration(
@@ -166,7 +179,7 @@ class _HomepageEOState extends State<HomepageEO> {
           ),
         ],
         leading: Padding(
-          padding: const EdgeInsets.only(left: 20), // Set the same left padding
+          padding: const EdgeInsets.only(left: 20),
           child: Container(
             width: 50,
             height: 50,
@@ -187,8 +200,7 @@ class _HomepageEOState extends State<HomepageEO> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(
-                  text: getGreeting() +
-                      " Ryo", // Menggunakan fungsi getGreeting()
+                  text: getGreeting() + " $userName",
                   style: CustomTextStyles.title,
                 ),
                 SizedBox(height: 5),
@@ -230,7 +242,6 @@ class _HomepageEOState extends State<HomepageEO> {
                 SizedBox(height: 15),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  // scrollDirection: Axis.horizontal,
                   child: Row(
                     children: recommendedBusinesses
                         .map((business) => Padding(
@@ -258,13 +269,11 @@ class _HomepageEOState extends State<HomepageEO> {
                       .map((business) => Padding(
                             padding: const EdgeInsets.only(bottom: 15),
                             child: BuildContainerPanjang(
-                              context:
-                                  context, // Pass the context for navigation
+                              context: context,
                               imagePath: business["image"]!,
                               title: business["title"]!,
                               sub: business["subtitle"]!,
-                              category: business["category"] ??
-                                  'Unknown', // Use ?? for default value
+                              category: business["category"] ?? 'Unknown',
                               address: business["address"]!,
                               description: business["description"]!,
                             ),
