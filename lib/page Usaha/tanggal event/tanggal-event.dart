@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sponsorin/style/textstyle.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class TanggalEvent extends StatefulWidget {
@@ -34,31 +36,39 @@ class _TanggalEventState extends State<TanggalEvent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(244, 244, 244, 100),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 20),
+            padding: const EdgeInsets.only(
+              right: 20,
+            ), // Set the same right padding
             child: Container(
+              // color: Colors.yellow,
               width: 50,
               height: 50,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.notifications_none_outlined,
                 size: 30,
-                color: Colors.black,
+                color: Colors.black54,
               ),
             ),
           ),
         ],
         leading: Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: const Icon(
-            Icons.account_circle_outlined,
-            size: 40,
-            color: Colors.black54,
+          padding: const EdgeInsets.only(left: 20), // Set the same left padding
+          child: Container(
+            width: 50,
+            height: 50,
+            child: Icon(
+              Icons.account_circle_outlined,
+              size: 40,
+              color: Colors.black54,
+            ),
           ),
         ),
       ),
@@ -67,13 +77,8 @@ class _TanggalEventState extends State<TanggalEvent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Tanggal Event Anda',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            CustomText(
+                text: 'Tanggal Event Anda', style: CustomTextStyles.title),
             const SizedBox(height: 20),
 
             // Widget Kalender
@@ -82,14 +87,6 @@ class _TanggalEventState extends State<TanggalEvent> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
-                    spreadRadius: 3,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
               ),
               child: TableCalendar(
                 firstDay: DateTime.utc(2022, 1, 1),
@@ -115,28 +112,50 @@ class _TanggalEventState extends State<TanggalEvent> {
                   todayDecoration: BoxDecoration(
                     color: Colors.blue,
                     shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   selectedDecoration: BoxDecoration(
                     color: Colors.orange,
-                    shape: BoxShape.circle,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 daysOfWeekHeight: 30,
                 daysOfWeekStyle: DaysOfWeekStyle(
                   weekdayStyle: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
+                    fontSize: 13,
+                    color: Colors.black54,
                     fontWeight: FontWeight.bold,
                   ),
                   weekendStyle: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87, // Set color sama dengan weekday
+                    fontSize: 13,
+                    color: Colors.black54,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 headerStyle: HeaderStyle(
                   formatButtonVisible: true,
                   titleCentered: true,
+                  titleTextStyle: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87),
+                  formatButtonTextStyle:
+                      TextStyle(color: Colors.white, fontSize: 12),
+                  formatButtonDecoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  leftChevronIcon: Icon(
+                    Icons.chevron_left,
+                    color: Colors.blue, // Ganti dengan warna yang diinginkan
+                    size: 25, // Ganti dengan ukuran yang diinginkan
+                  ),
+                  rightChevronIcon: Icon(
+                    Icons.chevron_right,
+                    color: Colors.blue, // Ganti dengan warna yang diinginkan
+                    size: 25, // Ganti dengan ukuran yang diinginkan
+                  ),
                 ),
                 calendarBuilders: CalendarBuilders(
                   markerBuilder: (context, date, events) {

@@ -121,6 +121,15 @@ class _loginPageEOState extends State<loginPageEO> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        title: Text(
+          "Sign In Event Organizer",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
         leading: Padding(
           padding: const EdgeInsets.only(left: 24.0),
           child: IconButton(
