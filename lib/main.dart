@@ -33,7 +33,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
       debugShowCheckedModeBanner: false,
       title: 'Business App',
       theme: ThemeData(
@@ -41,7 +40,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         textTheme: const TextTheme(),
       ),
-      home: ProfileUsaha(),
+      home: AddEvent(),
     );
   }
 }
@@ -67,6 +66,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _UsahaPages = [
     HomepageUsaha(),
     SearchPageUsaha(),
+    TanggalEvent(),
     ProfileUsaha()
   ];
   List<BottomNavigationBarItem> _buildNavBarItems() {
