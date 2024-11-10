@@ -33,15 +33,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Business App',
-      theme: ThemeData(
-        primaryColor: primaryColor,
-        fontFamily: 'Poppins',
-        textTheme: const TextTheme(),
-      ),
-      home: TanggalEvent(),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Business App',
+        theme: ThemeData(
+          primaryColor: primaryColor,
+          fontFamily: 'Poppins',
+          textTheme: const TextTheme(),
+        ),
+        home: auth());
   }
 }
 
