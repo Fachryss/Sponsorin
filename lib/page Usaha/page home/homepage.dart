@@ -225,7 +225,7 @@ class _HomepageUsahaState extends State<HomepageUsaha> {
                 ),
                 SizedBox(height: 25),
                 const CustomText(
-                    text: "Rekomendasi usaha", style: CustomTextStyles.header),
+                    text: "Rekomendasi events", style: CustomTextStyles.header),
                 SizedBox(height: 15),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -250,7 +250,7 @@ class _HomepageUsahaState extends State<HomepageUsaha> {
                   height: 25,
                 ),
                 const CustomText(
-                    text: "Usaha lainnya", style: CustomTextStyles.header),
+                    text: "Events lainnya", style: CustomTextStyles.header),
                 SizedBox(height: 15),
                 Column(
                   children: otherBusinesses

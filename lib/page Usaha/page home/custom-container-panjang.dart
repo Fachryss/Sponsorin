@@ -36,7 +36,9 @@ Widget BuildContainerPanjang({
             children: [
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(8),
+                  ),
                 ),
                 width: 120,
                 height: 80,

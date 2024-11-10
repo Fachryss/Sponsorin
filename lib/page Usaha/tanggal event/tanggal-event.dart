@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sponsorin/style/textstyle.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 class TanggalEvent extends StatefulWidget {
   const TanggalEvent({Key? key}) : super(key: key);
@@ -73,20 +72,31 @@ class _TanggalEventState extends State<TanggalEvent> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+        padding: const EdgeInsets.fromLTRB(24, 25, 24, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomText(
+            const CustomText(
                 text: 'Tanggal Event Anda', style: CustomTextStyles.title),
             const SizedBox(height: 20),
 
             // Widget Kalender
+            SizedBox(
+              height: 15,
+            ),
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: Colors.grey.withOpacity(0.1),
+                //     spreadRadius: 1,
+                //     blurRadius: 1,
+                //     offset: const Offset(0, 3),
+                //   ),
+                // ],
               ),
               child: TableCalendar(
                 firstDay: DateTime.utc(2022, 1, 1),
@@ -112,36 +122,35 @@ class _TanggalEventState extends State<TanggalEvent> {
                   todayDecoration: BoxDecoration(
                     color: Colors.blue,
                     shape: BoxShape.circle,
-                    borderRadius: BorderRadius.circular(12),
                   ),
                   selectedDecoration: BoxDecoration(
                     color: Colors.orange,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(12),
+                    shape: BoxShape.circle,
                   ),
                 ),
                 daysOfWeekHeight: 30,
                 daysOfWeekStyle: DaysOfWeekStyle(
                   weekdayStyle: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
+                    fontSize: 14,
+                    color: Colors.black45,
                     fontWeight: FontWeight.bold,
                   ),
                   weekendStyle: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
+                    fontSize: 14,
+                    color: Colors.black45, // Set color sama dengan weekday
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 headerStyle: HeaderStyle(
-                  formatButtonVisible: true,
-                  titleCentered: true,
                   titleTextStyle: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87),
-                  formatButtonTextStyle:
-                      TextStyle(color: Colors.white, fontSize: 12),
+                    fontSize: 16,
+                    fontWeight:
+                        FontWeight.bold, // Ganti dengan warna yang diinginkan
+                  ),
+                  formatButtonTextStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                  ),
                   formatButtonDecoration: BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(16.0),
@@ -149,12 +158,12 @@ class _TanggalEventState extends State<TanggalEvent> {
                   leftChevronIcon: Icon(
                     Icons.chevron_left,
                     color: Colors.blue, // Ganti dengan warna yang diinginkan
-                    size: 25, // Ganti dengan ukuran yang diinginkan
+                    size: 30, // Ganti dengan ukuran yang diinginkan
                   ),
                   rightChevronIcon: Icon(
                     Icons.chevron_right,
                     color: Colors.blue, // Ganti dengan warna yang diinginkan
-                    size: 25, // Ganti dengan ukuran yang diinginkan
+                    size: 30, // Ganti dengan ukuran yang diinginkan
                   ),
                 ),
                 calendarBuilders: CalendarBuilders(
@@ -178,7 +187,7 @@ class _TanggalEventState extends State<TanggalEvent> {
                 ),
               ),
             ),
-            const SizedBox(height: 12.0),
+            const SizedBox(height: 25.0),
 
             // Menampilkan event pada tanggal yang dipilih
             if (_selectedDay != null)
@@ -189,11 +198,12 @@ class _TanggalEventState extends State<TanggalEvent> {
                     Text(
                       'Events pada ${_selectedDay!.day}-${_selectedDay!.month}-${_selectedDay!.year}:',
                       style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromRGBO(0, 0, 0, 70),
                       ),
                     ),
-                    const SizedBox(height: 8.0),
+                    const SizedBox(height: 25.0),
 
                     // Menampilkan event dari _events hanya jika _selectedDay cocok
                     if (_events.containsKey(DateTime(_selectedDay!.year,
@@ -253,55 +263,135 @@ class BuildContainerPanjang extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            spreadRadius: 3,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        borderRadius: BorderRadius.all(Radius.circular(15)),
       ),
       child: Row(
         children: [
-          Image.asset(
-            imagePath,
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+            ),
+            width: 120,
+            height: 80,
+            margin: EdgeInsets.all(7),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                  style: TextStyle(
+                    color: Color.fromRGBO(0, 0, 0, 70),
+                    fontFamily: 'Poppins',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
                 Text(
                   subtitle,
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
+                    color: Color.fromRGBO(0, 0, 0, 70),
+                    fontFamily: 'Poppins',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                   ),
-                  overflow: TextOverflow.ellipsis,
                   maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
+          SizedBox(width: 15),
+          Icon(
+            Icons.arrow_forward_ios,
+            color: Color.fromRGBO(30, 170, 253, 100),
+            size: 20,
+          ),
         ],
       ),
     );
+    // return Container(
+    //   margin: EdgeInsets.all(7),
+    //   // padding:  EdgeInsets.all(16.0),
+    //   decoration: BoxDecoration(
+    //     color: Colors.white,
+    //     borderRadius: BorderRadius.all(
+    //       Radius.circular(8),
+    //     ),
+    //     // boxShadow: [
+    //     //   BoxShadow(
+    //     //     color: Colors.grey.withOpacity(0.3),
+    //     //     spreadRadius: 3,
+    //     //     blurRadius: 5,
+    //     //     offset: const Offset(0, 3),
+    //     //   ),
+    //     // ],
+    //   ),
+    //   width: 120,
+    //   height: 80,
+    //   child: Row(
+    //     children: [
+    //       Container(
+    //         decoration: BoxDecoration(
+    //           borderRadius: BorderRadius.all(
+    //             Radius.circular(8),
+    //           ),
+    //         ),
+    //         width: 120,
+    //         height: 80,
+    //         margin: EdgeInsets.all(7),
+    //         child: ClipRRect(
+    //           borderRadius: BorderRadius.circular(8.0),
+    //           child: Image.asset(
+    //             imagePath,
+    //             fit: BoxFit.cover,
+    //           ),
+    //         ),
+    //       ),
+    //       SizedBox(width: 15),
+    //       Expanded(
+    //         child: Column(
+    //           crossAxisAlignment: CrossAxisAlignment.start,
+    //           children: [
+    //             Text(
+    //               title,
+    //               style: TextStyle(
+    //                 color: Color.fromRGBO(0, 0, 0, 70),
+    //                 fontFamily: 'Poppins',
+    //                 fontSize: 15,
+    //                 fontWeight: FontWeight.w700,
+    //               ),
+    //               overflow: TextOverflow.ellipsis,
+    //             ),
+    //             Text(
+    //               subtitle,
+    //               style: TextStyle(
+    //                 color: Color.fromRGBO(0, 0, 0, 70),
+    //                 fontFamily: 'Poppins',
+    //                 fontSize: 12,
+    //                 fontWeight: FontWeight.w600,
+    //               ),
+    //               overflow: TextOverflow.ellipsis,
+    //               maxLines: 2,
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 }
