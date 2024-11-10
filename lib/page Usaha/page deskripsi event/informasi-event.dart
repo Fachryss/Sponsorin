@@ -1,83 +1,219 @@
-import 'dart:io';
-import 'dart:math';
-
-import 'package:enhanced_url_launcher/enhanced_url_launcher.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:http/src/client.dart';
-import 'package:open_file/open_file.dart';
-import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/deskripsi-usaha.dart';
 import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/review.dart';
-import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/titleusaha.dart';
-import 'package:sponsorin/page%20EO/ai/AIGenerate.dart';
-
-import 'package:sponsorin/page%20EO/page%20home/homepage.dart';
-import 'package:sponsorin/page%20EO/page%20proses/proses-kerja-sama.dart';
-import 'package:sponsorin/page%20Usaha/page%20deskripsi%20event/deskripsi-event.dart';
 import 'package:sponsorin/page%20Usaha/page%20deskripsi%20event/proposal-page.dart';
-import 'package:sponsorin/page%20Usaha/page%20deskripsi%20event/titleEvent.dart';
-import 'package:sponsorin/style/textstyle.dart';
-import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:googleapis/drive/v3.dart' as drive;
-import 'package:googleapis_auth/auth_io.dart';
-import 'dart:io' as io;
-import 'package:path_provider/path_provider.dart';
-import 'package:googledrivehandler/googledrivehandler.dart';
+import 'package:sponsorin/page%20EO/page%20proses/proses-kerja-sama.dart';
 
 class InfromasiEvent extends StatefulWidget {
-  // final String businessName;
-  // final String category;
-  // final String address;
-  // final String description;
-  // final String imagePath;
+  final Map<String, dynamic> eventData;
 
-  // const InfromasiEvent({
-  //   Key? key,
-  //   required this.businessName,
-  //   required this.category,
-  //   required this.address,
-  //   required this.description,
-  //   required this.imagePath,
-  // }) : super(key: key);
+  const InfromasiEvent({
+    Key? key,
+    required this.eventData,
+  }) : super(key: key);
 
   @override
   State<InfromasiEvent> createState() => _InfromasiEventState();
 }
 
-Widget _categoryButton(String text, bool isSelected, VoidCallback onPressed) {
-  return GestureDetector(
-    onTap: onPressed,
-    child: Text(
-      text,
-      style: TextStyle(
-        color: isSelected ? Color(0xFF1EAAFD) : Colors.black54,
-        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-        fontSize: 18,
-      ),
-    ),
-  );
-}
+class _InfromasiEventState extends State<InfromasiEvent> {
+  String selectedCategory = "overview";
 
-Widget _getContent(
-  String selectedCategory,
-  String descriptionOne,
-  String descriptionTwo,
-  String descriptionThree,
-  String descriptionFour,
-  String title,
-  String titleTwo,
-  String titleThree,
-  String titleFour,
-  String titleFive,
-  String titleSix,
-  String descriptionFive,
-  ImageProvider ImagePathOne,
-  ImageProvider ImagePathTwo,
-  ImageProvider ImagePathThree,
-) {
-  if (selectedCategory == "overview") {
-    return buildDescriptionCardEvent(
+  Widget _categoryButton(String text, bool isSelected, VoidCallback onPressed) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Text(
+        text,
+        style: TextStyle(
+          color: isSelected ? Color(0xFF1EAAFD) : Colors.black54,
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+          fontSize: 18,
+        ),
+      ),
+    );
+  }
+
+  Widget titleEvent(String title, String category, String address, String phone) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 8),
+        Text(
+          category,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.black54,
+          ),
+        ),
+        SizedBox(height: 8),
+        Row(
+          children: [
+            Icon(Icons.location_on_outlined, color: Colors.black54),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                address,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 8),
+        Row(
+          children: [
+            Icon(Icons.phone_outlined, color: Colors.black54),
+            SizedBox(width: 8),
+            Text(
+              phone,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black54,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget buildDescriptionCardEvent(
+    String descriptionOne,
+    String descriptionTwo,
+    String descriptionThree,
+    String descriptionFour,
+    String title,
+    String titleTwo,
+    String titleThree,
+    String titleFour,
+    String titleFive,
+    String titleSix,
+    String descriptionFive,
+    ImageProvider imageOne,
+    ImageProvider imageTwo,
+    ImageProvider imageThree,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Deskripsi Event Section
+        Text(
+          title,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 10),
+        Text(
+          descriptionOne,
+          style: TextStyle(fontSize: 16, color: Colors.black87),
+        ),
+        SizedBox(height: 25),
+
+        // Dokumentasi Section
+        Text(
+          titleTwo,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 10),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image(image: imageOne, width: 200, height: 150, fit: BoxFit.cover),
+              ),
+              SizedBox(width: 10),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image(image: imageTwo, width: 200, height: 150, fit: BoxFit.cover),
+              ),
+              SizedBox(width: 10),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image(image: imageThree, width: 200, height: 150, fit: BoxFit.cover),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 25),
+
+        // Kegiatan Events Section
+        Text(
+          titleThree,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 10),
+        Text(
+          descriptionTwo,
+          style: TextStyle(fontSize: 16, color: Colors.black87),
+        ),
+        SizedBox(height: 25),
+
+        // Target Audiens Section
+        Text(
+          titleFour,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 10),
+        Text(
+          descriptionThree,
+          style: TextStyle(fontSize: 16, color: Colors.black87),
+        ),
+        SizedBox(height: 25),
+
+        // Paket Sponsorship Section
+        Text(
+          titleFive,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 10),
+        Text(
+          descriptionFour,
+          style: TextStyle(fontSize: 16, color: Colors.black87),
+        ),
+        SizedBox(height: 25),
+
+        // Demografi Section
+        Text(
+          titleSix,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 10),
+        Text(
+          descriptionFive,
+          style: TextStyle(fontSize: 16, color: Colors.black87),
+        ),
+      ],
+    );
+  }
+
+  Widget _getContent(
+    String selectedCategory,
+    String descriptionOne,
+    String descriptionTwo,
+    String descriptionThree,
+    String descriptionFour,
+    String title,
+    String titleTwo,
+    String titleThree,
+    String titleFour,
+    String titleFive,
+    String titleSix,
+    String descriptionFive,
+    ImageProvider ImagePathOne,
+    ImageProvider ImagePathTwo,
+    ImageProvider ImagePathThree,
+  ) {
+    if (selectedCategory == "overview") {
+      return buildDescriptionCardEvent(
         descriptionOne,
         descriptionTwo,
         descriptionThree,
@@ -91,28 +227,16 @@ Widget _getContent(
         descriptionFive,
         ImagePathOne,
         ImagePathTwo,
-        ImagePathThree);
-  } else if (selectedCategory == "reviews") {
-    return buildReviewPage();
-  } else if (selectedCategory == "Proposal") {
-    return buildProposalCard();
-  }
-  return Container(); // Fallback for any other category
-}
-
-class _InfromasiEventState extends State<InfromasiEvent> {
-  String fileName = '';
-  File? file_proposal;
-
-  void _showError(String error) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $error')),
+        ImagePathThree,
       );
+    } else if (selectedCategory == "reviews") {
+      return buildReviewPage();
+    } else if (selectedCategory == "Proposal") {
+      return buildProposalCard();
     }
+    return Container();
   }
 
-  String selectedCategory = "overview";
   void _showParticipat(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -123,9 +247,7 @@ class _InfromasiEventState extends State<InfromasiEvent> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
               Text(
                 "Anda yakin ingin berpartisipasi menjadi sponsor untuk acara ini?",
                 textAlign: TextAlign.center,
@@ -134,9 +256,7 @@ class _InfromasiEventState extends State<InfromasiEvent> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(
-                height: 25,
-              ),
+              SizedBox(height: 25),
               Container(
                 margin: EdgeInsets.fromLTRB(24, 15, 24, 15),
                 child: Column(
@@ -227,12 +347,10 @@ class _InfromasiEventState extends State<InfromasiEvent> {
                   height: 396,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20.0),
-                    // bukan ini
-                    child: Image.asset('image/google.png'),
-                    // child: Image.network(
-                    //   widget.imagePath,
-                    //   fit: BoxFit.cover,
-                    // ),
+                    child: Image.asset(
+                      widget.eventData['imagePath'],
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 SizedBox(height: 20),
@@ -251,9 +369,10 @@ class _InfromasiEventState extends State<InfromasiEvent> {
                     Text(
                       "|",
                       style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54),
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                      ),
                     ),
                     SizedBox(width: 10),
                     _categoryButton(
@@ -269,9 +388,10 @@ class _InfromasiEventState extends State<InfromasiEvent> {
                     Text(
                       "|",
                       style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54),
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                      ),
                     ),
                     SizedBox(width: 10),
                     _categoryButton(
@@ -287,18 +407,15 @@ class _InfromasiEventState extends State<InfromasiEvent> {
                 ),
                 SizedBox(height: 25),
                 titleEvent(
-                    'Disnat',
-                    'Seminar, Pendidikan, Tech',
-                    'Jalan Raya Bukit Darmo 22-24, Surabaya',
-                    '+62 853-3573-3052'
-                    // widget.businessName,
-                    // widget.category,
-                    // widget.address,
-                    ),
+                  widget.eventData['title'],
+                  widget.eventData['category'],
+                  widget.eventData['address'],
+                  widget.eventData['phoneNumber'],
+                ),
                 SizedBox(height: 25),
                 _getContent(
                   selectedCategory,
-                  'Google I/O Extended Surabaya 2021 berlangsung pada 29 Juli di Suara Surabaya Center, menghadirkan topik seperti Android, Flutter, Machine Learning, dan Firebases',
+                  widget.eventData['description'],
                   '- Make the Best Use of Dart \n- Flutter for Web Development \n- Firebase for Mobile Apps',
                   '- Pengembangan perangkat lunak \n- Pengembangan aplikasi \n- Pengembangan web',
                   '- Paket utama (Title Sponsor): \nNama sponsor ditampilkan di materi promosi utama. \nLogo sponsor di website dan materi cetak acara. \nKesempatan untuk berbicara di acara atau menyajikan presentasi.\nBooth eksklusif atau area pameran.\nAkses VIP dan undangan untuk acara khusus.',
@@ -309,9 +426,9 @@ class _InfromasiEventState extends State<InfromasiEvent> {
                   'Paket Sponsorship',
                   'Demografi',
                   '- Umur: 15 - 40 Tahun\n- Latar belakang pendidikan di bidang teknik, ilmu komputer, desain, dan bisnis.\n- Tingkat pengalaman: pemula - profesional',
-                  AssetImage('image/googleShow.jpg'),
-                  AssetImage('image/google.png'),
-                  AssetImage('image/google.png'),
+                  AssetImage(widget.eventData['dokumentasi'][0]),
+                  AssetImage(widget.eventData['dokumentasi'][1]),
+                  AssetImage(widget.eventData['dokumentasi'][2]),
                 ),
                 SizedBox(height: 25),
               ],

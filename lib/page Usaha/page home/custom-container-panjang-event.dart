@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/informasi-usaha.dart';
+import 'package:sponsorin/page%20Usaha/page%20deskripsi%20event/informasi-event.dart';
 
 Widget BuildContainerPanjangEvent({
   required BuildContext context,
@@ -12,18 +13,29 @@ Widget BuildContainerPanjangEvent({
     children: [
       GestureDetector(
         onTap: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => InformasiUsaha(
-          //       businessName: title,
-          //       category: category,
-          //       address: address,
-          //       description: description,
-          //       imagePath: imagePath,
-          //     ),
-          //   ),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => InfromasiEvent(
+                eventData: {
+                  'imagePath': imagePath,
+                  'title': title,
+                  'category':
+                      'General', // You might want to add category to your data model
+                  'description':
+                      'Default description', // Add description to your data model
+                  'address':
+                      'Default address', // Add address to your data model
+                  'phoneNumber': '+62 853-3573-3052',
+                  'dokumentasi': [
+                    'image/googleShow.jpg',
+                    'image/google.png',
+                    'image/google.png'
+                  ],
+                },
+              ),
+            ),
+          );
         },
         child: Container(
           decoration: BoxDecoration(
@@ -41,7 +53,7 @@ Widget BuildContainerPanjangEvent({
                 margin: EdgeInsets.all(7),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
-                  child: Image.asset(
+                  child: Image.network(
                     imagePath,
                     fit: BoxFit.cover,
                   ),

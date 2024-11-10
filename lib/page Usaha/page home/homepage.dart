@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sponsorin/page%20EO/page%20home/custom-container-panjang.dart';
-import 'package:sponsorin/page%20EO/page%20home/custom-container.dart';
 import 'package:sponsorin/page%20Usaha/page%20home/custom-container-panjang-event.dart';
+import 'package:sponsorin/page%20EO/page%20home/custom-container.dart';
 import 'package:sponsorin/style/textstyle.dart';
 import 'dart:math';
+import 'package:sponsorin/page%20Usaha/page%20deskripsi%20event/informasi-event.dart';
+
 
 class HomepageUsaha extends StatefulWidget {
   const HomepageUsaha({super.key});
@@ -17,60 +19,82 @@ class _HomepageUsahaState extends State<HomepageUsaha> {
   String selectedCategory = "Musik";
   bool isLoading = true;
   String? error;
-
-  Map<String, List<Map<String, String>>> businessData = {};
+  String userName = "User"; // Default username
+  Map<String, List<Map<String, String>>> eventData = {};
 
   @override
   void initState() {
     super.initState();
-    fetchDataFromFirestore(); // Fetch data saat inisialisasi
+    fetchUserName();
+    fetchDataFromFirestore();
   }
 
-  // Fungsi untuk fetch data dari Firestore
+  // Fetch the name field from Firestore
+  Future<void> fetchUserName() async {
+    try {
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      
+      setState(() {
+        userName = userDoc['name'] ?? 'User';
+      });
+    } catch (e) {
+      print("Error fetching user name: $e");
+      setState(() {
+        userName = 'User';
+      });
+    }
+  }
+
+  List<String> getCategoriesFromField(dynamic categoryField) {
+    if (categoryField is String) {
+      return [categoryField];
+    } else if (categoryField is List) {
+      return categoryField.map((e) => e.toString()).toList();
+    }
+    return ['Unknown'];
+  }
+
   Future<void> fetchDataFromFirestore() async {
     try {
       QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('Companies').get();
-      print(
-          "Data fetched from Firestore: ${querySnapshot.docs.length} documents"); // Tambahkan log ini
+          await FirebaseFirestore.instance.collection('Event').get();
+      print("Data fetched from Firestore: ${querySnapshot.docs.length} documents");
 
-      querySnapshot.docs.forEach((doc) {
-        var companyData = doc.data() as Map<String, dynamic>;
-        print("Company data: $companyData"); // Tambahkan log ini
+      for (var doc in querySnapshot.docs) {
+        var eventData = doc.data() as Map<String, dynamic>;
+        print("Event data: $eventData");
 
-        String category = companyData['category'];
-        String image = companyData['image'] ?? "";
-        String name = companyData['name'] ?? "";
-        String subtitle = companyData['subtitle'] ?? "";
-        String description = companyData['description'] ?? "";
-        String address = companyData['location'] ?? "";
+        List<String> categories = getCategoriesFromField(eventData['category']);
+        String image = eventData['image'] ?? "";
+        String name = eventData['name'] ?? "";
+        String description = eventData['description'] ?? "";
 
-        // print("Category Value: $categoryValue")
+        Map<String, String> eventEntry = {
+          "image": image,
+          "title": name,
+          "description": description,
+          "category": categories.join(', '),
+        };
 
-        if (businessData.containsKey(category)) {
-          businessData[category]!.add({
-            "image": image,
-            "title": name,
-            "subtitle": subtitle,
-            "description": description,
-            "address": address,
-          });
-        } else {
-          businessData[category] = [
-            {
-              "image": image,
-              "title": name,
-              "subtitle": subtitle,
-              "description": description,
-              "address": address,
-            }
-          ];
+        for (String category in categories) {
+          if (this.eventData.containsKey(category)) {
+            this.eventData[category]!.add(eventEntry);
+          } else {
+            this.eventData[category] = [eventEntry];
+          }
         }
-      });
+      }
 
-      setState(() {});
+      setState(() {
+        isLoading = false;
+      });
     } catch (e) {
       print("Error fetching data from Firestore: $e");
+      setState(() {
+        error = e.toString();
+        isLoading = false;
+      });
     }
   }
 
@@ -78,13 +102,12 @@ class _HomepageUsahaState extends State<HomepageUsaha> {
     return ElevatedButton(
       onPressed: () {
         setState(() {
-          selectedCategory = text; // Update kategori yang dipilih
+          selectedCategory = text;
         });
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected ? Colors.blue : Colors.white,
-        foregroundColor:
-            isSelected ? Colors.white : Color.fromARGB(255, 109, 109, 109),
+        foregroundColor: isSelected ? Colors.white : Color.fromARGB(255, 109, 109, 109),
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(6),
@@ -94,33 +117,34 @@ class _HomepageUsahaState extends State<HomepageUsaha> {
         children: [
           Icon(icon, size: 20),
           SizedBox(width: 5),
-          Text(text,
-              style: TextStyle(
-                color: isSelected
-                    ? Colors.white
-                    : Color.fromARGB(255, 109, 109, 109),
-                fontWeight: FontWeight.bold,
-              ) // Optional: Customize font style
-              ),
+          Text(
+            text,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Color.fromARGB(255, 109, 109, 109),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  List<Map<String, String>> getRandomBusinesses(int count) {
-    List<Map<String, String>> allBusinesses = [];
-    businessData.forEach((key, value) {
-      allBusinesses.addAll(value);
+  List<Map<String, String>> getRandomEvents(int count) {
+    List<Map<String, String>> allEvents = [];
+    eventData.forEach((key, value) {
+      allEvents.addAll(value);
     });
-    allBusinesses.shuffle(Random());
-    return allBusinesses.take(count).toList();
+
+    allEvents = allEvents.toSet().toList();
+    allEvents.shuffle(Random());
+    return allEvents.take(count).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> recommendedBusinesses =
-        businessData[selectedCategory] ?? [];
-    List<Map<String, String>> otherBusinesses = getRandomBusinesses(6);
+    List<Map<String, String>> recommendedEvents =
+        eventData[selectedCategory] ?? [];
+    List<Map<String, String>> otherEvents = getRandomEvents(6);
 
     return Scaffold(
       appBar: AppBar(
@@ -128,11 +152,8 @@ class _HomepageUsahaState extends State<HomepageUsaha> {
         elevation: 0,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(
-              right: 20,
-            ), // Set the same right padding
+            padding: const EdgeInsets.only(right: 20),
             child: Container(
-              // color: Colors.yellow,
               width: 50,
               height: 50,
               decoration: BoxDecoration(
@@ -148,7 +169,7 @@ class _HomepageUsahaState extends State<HomepageUsaha> {
           ),
         ],
         leading: Padding(
-          padding: const EdgeInsets.only(left: 20), // Set the same left padding
+          padding: const EdgeInsets.only(left: 20),
           child: Container(
             width: 50,
             height: 50,
@@ -169,107 +190,87 @@ class _HomepageUsahaState extends State<HomepageUsaha> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(
-                  text: getGreeting() +
-                      " Ryo", // Menggunakan fungsi getGreeting()
+                  text: getGreeting() + " $userName",
                   style: CustomTextStyles.title,
                 ),
                 SizedBox(height: 5),
                 const CustomText(
-                    text: 'Ingin sponsorin event apa hari ini?',
-                    style: CustomTextStyles.subtitle),
-                const SizedBox(height: 25),
-                CustomText(
-                    text: "On going events", style: CustomTextStyles.title),
-                SizedBox(height: 25),
-                BuildContainerPanjangEvent(
-                  context: context,
-                  imagePath: "image/disnat.png",
-                  title: 'Dies Natalis',
-                  date: '10 September 2024',
-                  time: '07.00 - 15.00 PM ',
+                  text: 'Ingin sponsorin event apa hari ini?',
+                  style: CustomTextStyles.subtitle
                 ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _categoryButton("Musik", selectedCategory == "Musik",
-                          Icons.music_note_outlined),
+                      _categoryButton("Musik", selectedCategory == "Musik", Icons.music_note_outlined),
                       SizedBox(width: 15),
-                      _categoryButton(
-                          "Olahraga",
-                          selectedCategory == "Olahraga",
-                          Icons.sports_basketball_outlined),
+                      _categoryButton("Olahraga", selectedCategory == "Olahraga", Icons.sports_basketball_outlined),
                       SizedBox(width: 15),
-                      _categoryButton(
-                          "Seni & Budaya",
-                          selectedCategory == "Seni & Budaya",
-                          Icons.sports_gymnastics_outlined),
+                      _categoryButton("Seni & Budaya", selectedCategory == "Seni & Budaya", Icons.sports_gymnastics_outlined),
                       SizedBox(width: 15),
-                      _categoryButton(
-                          "Bisnis & Budaya",
-                          selectedCategory == "Bisnis & Budaya",
-                          Icons.business_outlined),
+                      _categoryButton("Bisnis & Budaya", selectedCategory == "Bisnis & Budaya", Icons.business_outlined),
                       SizedBox(width: 15),
-                      _categoryButton(
-                          "Bisnis & Teknologi",
-                          selectedCategory == "Bisnis & Teknologi",
-                          Icons.computer_outlined),
+                      _categoryButton("Bisnis & Teknologi", selectedCategory == "Bisnis & Teknologi", Icons.computer_outlined),
                       SizedBox(width: 15),
-                      _categoryButton(
-                          "Pendidikan",
-                          selectedCategory == "Pendidikan",
-                          Icons.school_outlined),
+                      _categoryButton("Pendidikan", selectedCategory == "Pendidikan", Icons.school_outlined),
                     ],
                   ),
                 ),
                 SizedBox(height: 25),
                 const CustomText(
-                    text: "Rekomendasi events", style: CustomTextStyles.header),
+                  text: "Rekomendasi events",
+                  style: CustomTextStyles.header
+                ),
                 SizedBox(height: 15),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  // scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: recommendedBusinesses
-                        .map((business) => Padding(
-                              padding: const EdgeInsets.only(right: 20),
-                              child: CustomContainerBerdiri(
-                                imagePath: business["image"]!,
+                if (isLoading)
+                  Center(child: CircularProgressIndicator())
+                else if (error != null)
+                  Center(child: Text('Error: $error'))
+                else if (recommendedEvents.isEmpty)
+                  Center(child: Text('No events found for this category'))
+                else
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: recommendedEvents
+                          .map((event) => Padding(
+                                padding: const EdgeInsets.only(right: 20),
+                                child: CustomContainerBerdiri(
+                                  imagePath: event["image"]!,
+                                  context: context,
+                                  title: event["title"]!,
+                                  category: event["category"]!,
+                                  description: event["description"]!,
+                                  address: "", // Remove if not needed
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                SizedBox(height: 25),
+                const CustomText(
+                  text: "Events lainnya",
+                  style: CustomTextStyles.header
+                ),
+                SizedBox(height: 15),
+                if (otherEvents.isEmpty)
+                  Center(child: Text('No other events available'))
+                else
+                  Column(
+                    children: otherEvents
+                        .map((event) => Padding(
+                              padding: const EdgeInsets.only(bottom: 15),
+                              child: BuildContainerPanjangEvent(
                                 context: context,
-                                title: business["title"]!,
-                                category: business["category"] ?? 'Unknown',
-                                address: business["address"]!,
-                                description: business["description"]!,
+                                imagePath: event["image"]!,
+                                title: event["title"]!,
+                                date: "Upcoming", // You might want to add date to your schema
+                                time: "TBA", // You might want to add time to your schema
                               ),
                             ))
                         .toList(),
                   ),
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                const CustomText(
-                    text: "Events lainnya", style: CustomTextStyles.header),
-                SizedBox(height: 15),
-                Column(
-                  children: otherBusinesses
-                      .map((business) => Padding(
-                            padding: const EdgeInsets.only(bottom: 15),
-                            child: BuildContainerPanjang(
-                              context:
-                                  context, // Pass the context for navigation
-                              imagePath: business["image"]!,
-                              title: business["title"]!,
-                              sub: business["subtitle"]!,
-                              category: business["category"] ??
-                                  'Unknown', // Use ?? for default value
-                              address: business["address"]!,
-                              description: business["description"]!,
-                            ),
-                          ))
-                      .toList(),
-                ),
               ],
             ),
           ),

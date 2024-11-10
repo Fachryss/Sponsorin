@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sponsorin/page%20EO/Page%20deskripsi%20usaha/informasi-usaha.dart';
+import 'package:sponsorin/page%20Usaha/page%20deskripsi%20event/informasi-event.dart';
 
 Widget CustomContainerBerdiri({
   required BuildContext context, 
@@ -10,7 +11,30 @@ Widget CustomContainerBerdiri({
   required String description,
   
   }) {
-  return Container(
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => InfromasiEvent(
+            eventData: {
+              'imagePath': imagePath,
+              'title': title,
+              'category': category,
+              'description': description,
+              'address': address,
+              'phoneNumber': '+62 853-3573-3052', // You might want to add this to your data model
+              'dokumentasi': [
+                'image/googleShow.jpg',
+                'image/google.png',
+                'image/google.png'
+              ],
+            },
+          ),
+        ),
+      );
+    },
+    child: Container(
     padding: EdgeInsets.all(20),
     decoration: BoxDecoration(
       color: Colors.white,
@@ -56,5 +80,6 @@ Widget CustomContainerBerdiri({
         ),
       ],
     ),
-  );
+  )
+  ); 
 }
