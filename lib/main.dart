@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _UsahaPages = [
     HomepageUsaha(),
     SearchPageUsaha(),
-    TanggalEvent(),
+    TanggalEvent(), 
     ProfileUsaha()
   ];
   List<BottomNavigationBarItem> _buildNavBarItems() {

@@ -38,6 +38,53 @@ class _AIGenerateState extends State<AIGenerate> {
   final TextEditingController _detailController = TextEditingController();
   final TextEditingController _subscibtionController = TextEditingController();
 
+  String _selectedModel = 'jamba-1.5-large';
+  
+  Widget _buildModelDropdown() {
+    return DropdownButtonFormField<String>(
+      value: _selectedModel,
+      items: const [
+        DropdownMenuItem(
+          value: 'jamba-1.5-large',
+          child: Text('JAMBA 1.5 Large'),
+        ),
+        DropdownMenuItem(
+          value: 'jamba-1.5-small',
+          child: Text('JAMBA 1.5 Small'),
+        ),
+        DropdownMenuItem(
+          value: 'gemini-2.0-flash-experimental',
+          child: Text('Gemini 2.0 Flash Experimental'),
+        ),
+        DropdownMenuItem(
+          value: 'gemini-2.0-flash',
+          child: Text('Gemini 2.0 Flash'),
+        ),
+        DropdownMenuItem(
+          value: 'gemini-2.0',
+          child: Text('Gemini 2.0'),
+        ),
+        DropdownMenuItem(
+          value: 'gemini-1.5-flash',
+          child: Text('Gemini 1.5 Flash'),
+        ),
+        DropdownMenuItem(
+          value: 'gemini-1.5-pro',
+          child: Text('Gemini 1.5 Pro'),
+        ),
+      ],
+      onChanged: (String? value) {
+        setState(() {
+          _selectedModel = value!;
+        });
+      },
+      decoration: InputDecoration(
+        labelText: 'Model',
+        border: OutlineInputBorder(),
+      ),
+    );
+  }
+
   // Fungsi untuk mengisi semua input dengan data simulasi
   void _fillSimulationData() {
     _nameController.text =
@@ -73,6 +120,7 @@ class _AIGenerateState extends State<AIGenerate> {
 
       try {
         String generatedProposal = await ApiService.generateProposal(
+          model: _selectedModel,
           eventName: _nameController.text,
           eventDescription: _descriptionController.text,
           audienceInfo: _infoController.text,
@@ -377,6 +425,10 @@ class _AIGenerateState extends State<AIGenerate> {
                       "Harap Diisi dengan Data yang Akurat dan Benar",
                       style: CustomTextStyles.header,
                     ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    _buildModelDropdown(),
                     const SizedBox(
                       height: 20,
                     ),
