@@ -2,6 +2,11 @@
 
 Sponsorin is an innovative application designed to help small and medium-sized Event Organizers (EO) in Indonesia find sponsors quickly and efficiently. By utilizing AI and Flutter technology, the app automates the proposal creation process and connects EOs directly with potential sponsors, improving the chances of securing sponsorship.
 
+## Usage Documentation:
+- **Login as a EO User:** Signup with email to accces the application
+- **Login as Sponsorship user:** Use the demo email main@byu.id and 12345 to acces the application
+
+
 ## Features
 
 - **AI-Powered Proposal Generation**: Automatically generate professional proposals using the OpenAI GPT API.
